@@ -24,6 +24,20 @@ DELETE FROM public.items;
 DELETE FROM public.outbox;
 ```
 
+# Генерация HTTP сервера
+```
+mvn clean compile
+```
+
+# Генерация gRPC клиента из Protobuf
+```
+mvn clean compile
+```
+# Генерация интеграционных событий Kafka из Protobuf
+```
+mvn clean compile
+```
+
 ## Лицензия
 
 Код распространяется под лицензией [MIT](./LICENSE).  
