@@ -20,5 +20,6 @@ public class DefaultDomainEventPublisher implements DomainEventPublisher {
                 publisher.publishEvent(event);
             }
         }
+
     }
 }
