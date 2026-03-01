@@ -17,6 +17,11 @@ public class Location extends ValueObject<Location> {
     private Location() {
     }
 
+    private Location(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public static Result<Location, Error> create(int x, int y) {
         if (x < MIN)
             return Result.failure(GeneralErrors.valueMustBeGreaterThan("x", x, MIN));
@@ -27,9 +32,7 @@ public class Location extends ValueObject<Location> {
         if (y > MAX)
             return Result.failure(GeneralErrors.valueMustBeLessThan("y", y, MAX));
 
-        Location location = new Location();
-        location.x = x;
-        location.y = y;
+        Location location = new Location(x, y);
 
         return Result.success(location);
     }
@@ -43,7 +46,7 @@ public class Location extends ValueObject<Location> {
         return equalityComponents().equals(l.equalityComponents());
     }
 
-    public Integer computeDistance(Location l) {
-        return Math.abs(this.x - l.x) + Math.abs(this.y - l.y);
+    public Result<Integer, Error> distanceTo(Location target) {
+        return Result.success(Math.abs(this.x - target.x) + Math.abs(this.y - target.y));
     }
 }

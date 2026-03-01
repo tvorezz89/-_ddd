@@ -68,8 +68,9 @@ class LocationTest {
         Result<Location, Error> location1 = Location.create(2, 6);
         Result<Location, Error> location2 = Location.create(4, 9);
         if (location1.isSuccess() && location2.isSuccess()) {
-            int distance = location1.getValue().computeDistance(location2.getValue());
-            assertEquals(5, distance);
+            Result<Integer, Error> distance = location1.getValue().distanceTo(location2.getValue());
+            assertTrue(distance.isSuccess());
+            assertEquals(5, distance.getValue());
         }
     }
 }
