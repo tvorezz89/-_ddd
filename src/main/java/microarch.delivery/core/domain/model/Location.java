@@ -14,13 +14,18 @@ public class Location extends ValueObject<Location> {
     private static final int MIN = 1;
     private static final int MAX = 10;
 
-    private Location(){}
+    private Location() {
+    }
 
     public static Result<Location, Error> create(int x, int y) {
-        if (x < MIN) return Result.failure(GeneralErrors.valueMustBeGreaterThan("x", x, MIN));
-        if (y < MIN) return Result.failure(GeneralErrors.valueMustBeGreaterThan("y", y, MIN));
-        if (x > MAX) return Result.failure(GeneralErrors.valueMustBeLessThan("x", x, MAX));
-        if (y > MAX) return Result.failure(GeneralErrors.valueMustBeLessThan("y", y, MAX));
+        if (x < MIN)
+            return Result.failure(GeneralErrors.valueMustBeGreaterThan("x", x, MIN));
+        if (y < MIN)
+            return Result.failure(GeneralErrors.valueMustBeGreaterThan("y", y, MIN));
+        if (x > MAX)
+            return Result.failure(GeneralErrors.valueMustBeLessThan("x", x, MAX));
+        if (y > MAX)
+            return Result.failure(GeneralErrors.valueMustBeLessThan("y", y, MAX));
 
         Location location = new Location();
         location.x = x;
@@ -31,7 +36,7 @@ public class Location extends ValueObject<Location> {
 
     @Override
     protected Iterable<Object> equalityComponents() {
-        return List.of(x,y);
+        return List.of(x, y);
     }
 
     public Boolean equals(Location l) {
