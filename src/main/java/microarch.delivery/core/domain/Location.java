@@ -6,6 +6,7 @@ import libs.errs.GeneralErrors;
 import libs.errs.Result;
 import lombok.Getter;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 public class Location extends ValueObject<Location> {
@@ -26,16 +27,18 @@ public class Location extends ValueObject<Location> {
         return Result.success(new Location(x, y));
     }
 
+    public static Location mustCreate(int x, int y) {
+        return create(x, y).getValueOrThrow();
+    }
+
     private Location(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public Result<Integer, Error> distanceTo(Location location) {
-        if (location == null) {
-            return Result.failure(GeneralErrors.valueIsRequired("location"));}
-        int distance = Math.abs(this.x - location.x) + Math.abs(this.y - location.y);
-        return Result.success(distance);
+    public int distanceTo(Location location) {
+        Objects.requireNonNull(location, "location");
+        return Math.abs(this.x - location.x) + Math.abs(this.y - location.y);
     }
 
 

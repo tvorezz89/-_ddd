@@ -152,7 +152,7 @@ class LocationTest {
             Location courier = Location.create(5, 7).getValue();
             Location order = Location.create(5, 7).getValue();
 
-            int distance = courier.distanceTo(order).getValue();
+            int distance = courier.distanceTo(order);
 
             assertEquals(0, distance);
         }
@@ -163,7 +163,7 @@ class LocationTest {
             Location courier = Location.create(1, 1).getValue();
             Location order = Location.create(3, 4).getValue();
 
-            int distance = courier.distanceTo(order).getValue();
+            int distance = courier.distanceTo(order);
 
             assertEquals(5, distance);
         }
@@ -174,7 +174,7 @@ class LocationTest {
             Location courier = Location.create(1, 5).getValue();
             Location order = Location.create(8, 5).getValue();
 
-            int distance = courier.distanceTo(order).getValue();
+            int distance = courier.distanceTo(order);
 
             assertEquals(7, distance);
         }
@@ -185,7 +185,7 @@ class LocationTest {
             Location courier = Location.create(5, 1).getValue();
             Location order = Location.create(5, 9).getValue();
 
-            int distance = courier.distanceTo(order).getValue();
+            int distance = courier.distanceTo(order);
 
             assertEquals(8, distance);
         }
@@ -196,7 +196,7 @@ class LocationTest {
             Location min = Location.create(Location.MIN_COORDINATE, Location.MIN_COORDINATE).getValue();
             Location max = Location.create(Location.MAX_COORDINATE, Location.MAX_COORDINATE).getValue();
 
-            int distance = min.distanceTo(max).getValue();
+            int distance = min.distanceTo(max);
 
             assertEquals(18, distance);
         }
@@ -207,8 +207,8 @@ class LocationTest {
             Location courier = Location.create(2, 3).getValue();
             Location order = Location.create(7, 9).getValue();
 
-            int distance1to2 = courier.distanceTo(order).getValue();
-            int distance2to1 = order.distanceTo(courier).getValue();
+            int distance1to2 = courier.distanceTo(order);
+            int distance2to1 = order.distanceTo(courier);
 
             assertEquals(distance1to2, distance2to1);
         }
@@ -218,9 +218,10 @@ class LocationTest {
         void shouldThrowExceptionWhenOtherIsNull() {
             Location location = Location.create(5, 7).getValue();
 
-            Result<Integer, Error> distance = location.distanceTo(null);
-
-            assertTrue(distance.isFailure());
+            assertThrows(
+                    NullPointerException.class,
+                    () -> location.distanceTo(null)
+            );
         }
     }
 }
