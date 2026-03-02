@@ -14,7 +14,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("Создание места хранения с валидными данными")
-    void create_withValidData_success() {
+    void createWithValidDataSuccess() {
         Result<StoragePlace, Error> result = StoragePlace.create("Рюкзак", 50);
 
         assertTrue(result.isSuccess());
@@ -27,7 +27,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("Ошибка создания: пустое имя")
-    void create_withEmptyName_failure() {
+    void createWithEmptyNameFailure() {
         Result<StoragePlace, Error> result = StoragePlace.create("  ", 50);
 
         assertTrue(result.isFailure());
@@ -35,7 +35,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("Ошибка создания: null имя")
-    void create_withNullName_failure() {
+    void createWithNullNameFailure() {
         Result<StoragePlace, Error> result = StoragePlace.create(null, 50);
 
         assertTrue(result.isFailure());
@@ -43,7 +43,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("Ошибка создания: объем равен 0")
-    void create_withZeroVolume_failure() {
+    void createWithZeroVolumeFailure() {
         Result<StoragePlace, Error> result = StoragePlace.create("Рюкзак", 0);
 
         assertTrue(result.isFailure());
@@ -51,7 +51,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("Ошибка создания: отрицательный объем")
-    void create_withNegativeVolume_failure() {
+    void createWithNegativeVolumeFailure() {
         Result<StoragePlace, Error> result = StoragePlace.create("Рюкзак", -10);
 
         assertTrue(result.isFailure());
@@ -59,7 +59,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("canPutOrder: возвращает true для пустого места с подходящим объемом")
-    void canPutOrder_emptyPlaceAndValidVolume_returnsTrue() {
+    void canPutOrderEmptyPlaceAndValidVolumeReturnsTrue() {
         StoragePlace place = StoragePlace.create("Багажник", 100).getValue();
 
         assertTrue(place.canPutOrder(50));
@@ -67,7 +67,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("canPutOrder: возвращает false, если объем больше вместимости")
-    void canPutOrder_volumeExceedsCapacity_returnsFalse() {
+    void canPutOrderVolumeExceedsCapacityReturnsFalse() {
         StoragePlace place = StoragePlace.create("Багажник", 50).getValue();
 
         assertFalse(place.canPutOrder(51));
@@ -76,7 +76,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("canPutOrder: возвращает false, если объем <= 0")
-    void canPutOrder_invalidVolume_returnsFalse() {
+    void canPutOrderInvalidVolumeReturnsFalse() {
         StoragePlace place = StoragePlace.create("Багажник", 50).getValue();
 
         assertFalse(place.canPutOrder(0));
@@ -85,7 +85,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("canPutOrder: возвращает false, если место уже занято")
-    void canPutOrder_occupiedPlace_returnsFalse() {
+    void canPutOrderOccupiedPlaceReturnsFalse() {
         StoragePlace place = StoragePlace.create("Рюкзак", 100).getValue();
         UUID orderId = UUID.randomUUID();
         var result = place.putOrder(orderId, 50);
@@ -96,7 +96,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("putOrder: успешное размещение заказа")
-    void putOrder_success() {
+    void putOrderSuccess() {
         StoragePlace place = StoragePlace.create("Сумка", 60).getValue();
         UUID orderId = UUID.randomUUID();
         int orderVolume = 40;
@@ -110,7 +110,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("putOrder: ошибка, если место уже занято")
-    void putOrder_placeAlreadyOccupied_failure() {
+    void putOrderPlaceAlreadyOccupiedFailure() {
         StoragePlace place = StoragePlace.create("Рюкзак", 100).getValue();
         UUID firstOrderId = UUID.randomUUID();
         place.putOrder(firstOrderId, 50);
@@ -124,7 +124,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("putOrder: ошибка, если объем заказа превышает вместимость")
-    void putOrder_volumeExceedsCapacity_failure() {
+    void putOrderVolumeExceedsCapacityFailure() {
         StoragePlace place = StoragePlace.create("Багажник", 50).getValue();
         UUID orderId = UUID.randomUUID();
 
@@ -136,7 +136,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("putOrder: ошибка, если объем заказа <= 0")
-    void putOrder_invalidVolume_failure() {
+    void putOrderInvalidVolumeFailure() {
         StoragePlace place = StoragePlace.create("Рюкзак", 50).getValue();
         UUID orderId = UUID.randomUUID();
 
@@ -146,7 +146,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("putOrder: ошибка, если orderId null")
-    void putOrder_nullOrderId_failure() {
+    void putOrderNullOrderIdFailure() {
         StoragePlace place = StoragePlace.create("Рюкзак", 50).getValue();
 
         assertThrows(NullPointerException.class, () -> place.putOrder(null, 20));
@@ -154,7 +154,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("extractOrder: успешное извлечение заказа")
-    void extractOrder_success() {
+    void extractOrderSuccess() {
         StoragePlace place = StoragePlace.create("Сумка", 60).getValue();
         UUID orderId = UUID.randomUUID();
         place.putOrder(orderId, 40);
@@ -169,7 +169,7 @@ class StoragePlaceTest {
 
     @Test
     @DisplayName("extractOrder: ошибка, если место уже пустое")
-    void extractOrder_emptyPlace_failure() {
+    void extractOrderEmptyPlaceFailure() {
         StoragePlace place = StoragePlace.create("Рюкзак", 50).getValue();
 
         Result<UUID, Error> result = place.extractOrder();
@@ -179,11 +179,19 @@ class StoragePlaceTest {
     }
 
     @Test
-    @DisplayName("проверка на разные объекты")
-    void objects_does_not_equals() {
+    @DisplayName("проверка эквилалентности на разные объекты")
+    void objectsDoesNotEquals() {
         StoragePlace place1 = StoragePlace.create("Рюкзак", 50).getValue();
         StoragePlace place2 = StoragePlace.create("Рюкзак", 50).getValue();
 
         assertNotEquals(place1, place2);
+    }
+
+    @Test
+    @DisplayName("проверка эквилалентности на одинаковые объекты")
+    void objectToItSelfEquals() {
+        StoragePlace place1 = StoragePlace.create("Рюкзак", 50).getValue();
+
+        assertEquals(place1, place1);
     }
 }
