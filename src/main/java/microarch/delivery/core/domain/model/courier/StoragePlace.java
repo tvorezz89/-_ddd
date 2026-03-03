@@ -4,6 +4,7 @@ import libs.ddd.BaseEntity;
 import libs.errs.*;
 import libs.errs.Error;
 import lombok.Getter;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -44,7 +45,7 @@ public class StoragePlace extends BaseEntity<UUID> {
     public UnitResult<Error> putOrder(UUID orderId, Integer orderVolume) {
         Objects.requireNonNull(orderId, "orderId");
         if (!canPutOrder(orderVolume)) {
-            return UnitResult.failure(Errors.storageAlreadyOccupied());
+            return UnitResult.failure(Errors.couldNotPutOrder());
         }
         this.orderId = orderId;
         return UnitResult.success();
@@ -66,7 +67,7 @@ public class StoragePlace extends BaseEntity<UUID> {
 
     public static final class Errors {
 
-        public static Error storageAlreadyOccupied() {
+        public static Error couldNotPutOrder() {
             return Error.of(
                     "could.not.put.order",
                     "Невозможно поместить заказ: место хранения уже занято или некорректный вес заказа"
