@@ -4,6 +4,7 @@ import libs.ddd.BaseEntity;
 import libs.errs.*;
 import libs.errs.Error;
 import lombok.Getter;
+import microarch.delivery.core.domain.Volume;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -13,36 +14,33 @@ import java.util.UUID;
 public class StoragePlace extends BaseEntity<UUID> {
 
     private final String name;
-    private final Integer totalVolume;
+    private final Volume totalVolume;
     private UUID orderId;
 
-
-    private StoragePlace(String name, Integer totalVolume) {
+    private StoragePlace(String name, Volume totalVolume) {
         super(UUID.randomUUID());
         this.name = name;
         this.totalVolume = totalVolume;
     }
 
-    public static Result<StoragePlace, Error> create(String name, Integer totalVolume) {
-        if (Objects.isNull(name) || name.trim().isEmpty()) {
+    public static Result<StoragePlace, Error> create(String name, Volume totalVolume) {
+        Objects.requireNonNull(name, "name");
+        Objects.requireNonNull(totalVolume, "totalVolume");
+        if (name.trim().isEmpty()) {
             return Result.failure(Errors.nameShouldBeNotEmpty());
-        }
-        if (Objects.isNull(totalVolume) || totalVolume <= 0) {
-            return Result.failure(Errors.totalVolumeShouldBePositive());
         }
         return Result.success(new StoragePlace(name, totalVolume));
     }
 
-    public static StoragePlace mustCreate(String name, Integer totalVolume) {
+    public static StoragePlace mustCreate(String name, Volume totalVolume) {
         return create(name, totalVolume).getValueOrThrow();
     }
 
-    public boolean canPutOrder(Integer orderVolume) {
-        Objects.requireNonNull(orderVolume, "orderVolume");
-        return isEmpty() && orderVolume > 0 && orderVolume <= this.totalVolume;
+    public boolean canPutOrder(Volume orderVolume) {
+        return isEmpty() && this.totalVolume.accommodates(orderVolume);
     }
 
-    public UnitResult<Error> putOrder(UUID orderId, Integer orderVolume) {
+    public UnitResult<Error> putOrder(UUID orderId, Volume orderVolume) {
         Objects.requireNonNull(orderId, "orderId");
         if (!canPutOrder(orderVolume)) {
             return UnitResult.failure(Errors.couldNotPutOrder());
@@ -85,13 +83,6 @@ public class StoragePlace extends BaseEntity<UUID> {
             return Error.of(
                     "name.should.not.be.empty",
                     "Название не может быть пустым"
-            );
-        }
-
-        public static Error totalVolumeShouldBePositive() {
-            return Error.of(
-                    "totalVolume.should.be.positve",
-                    "Вес груза должен быть положительным"
             );
         }
     }
