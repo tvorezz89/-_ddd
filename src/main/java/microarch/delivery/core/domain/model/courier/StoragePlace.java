@@ -36,6 +36,10 @@ public class StoragePlace extends BaseEntity<UUID> {
         return create(name, totalVolume).getValueOrThrow();
     }
 
+    public static StoragePlace getDefault() {
+        return mustCreate("Сумка", Volume.mustCreate(10));
+    }
+
     public boolean canPutOrder(Volume orderVolume) {
         return isEmpty() && this.totalVolume.accommodates(orderVolume);
     }
@@ -49,7 +53,6 @@ public class StoragePlace extends BaseEntity<UUID> {
         return UnitResult.success();
     }
 
-
     public Result<UUID, Error> extractOrder() {
         if (isEmpty()) {
             return Result.failure(Errors.storageAlreadyEmpty());
@@ -61,6 +64,11 @@ public class StoragePlace extends BaseEntity<UUID> {
 
     public boolean isEmpty() {
         return Objects.isNull(orderId);
+    }
+
+    public boolean containsOrder(UUID orderId) {
+        Objects.requireNonNull(orderId, "orderId");
+        return !isEmpty() && this.orderId.equals(orderId);
     }
 
     public static final class Errors {

@@ -1,5 +1,7 @@
 package libs.errs;
 
+import java.util.Objects;
+
 public final class GeneralErrors {
 
     private GeneralErrors() {
@@ -34,6 +36,14 @@ public final class GeneralErrors {
         }
         return Error.of("value.is.required", "Value is required for " + name);
     }
+
+    public static Error valueIsRequired(Object value, String name) {
+        if (Objects.isNull(value)) {
+            throw new IllegalArgumentException("Value must not be null for " + name);
+        }
+        return Error.of("value.is.required", "Value is required for " + name);
+    }
+
 
     public static Error invalidLength(String name) {
         if (isNullOrEmpty(name)) {
