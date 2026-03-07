@@ -29,7 +29,7 @@ public class OrderDispatcherDomainServiceImpl implements OrderDispatcherDomainSe
 
         var optionalNearbyCourier = couriers.stream()
                 .filter(courier -> courier.canTakeOrder(order.getVolume()))
-                .min(Comparator.comparingInt(courier -> courier.getLocation().distanceTo(order.getLocation())));
+                .min(Comparator.comparingInt(courier -> courier.calculateStepsToLocation(order.getLocation())));
 
         if (optionalNearbyCourier.isEmpty()) {
             return Result.failure(noCouriersCanDispatchOrder());
