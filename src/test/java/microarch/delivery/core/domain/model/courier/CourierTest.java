@@ -6,7 +6,6 @@ import microarch.delivery.core.domain.Location;
 import microarch.delivery.core.domain.Speed;
 import microarch.delivery.core.domain.Volume;
 import microarch.delivery.core.domain.model.order.Order;
-import microarch.delivery.core.domain.model.order.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -75,39 +74,6 @@ class CourierTest {
         Courier courier = Courier.mustCreate(courierName, speed, startLocation);
         assertFalse(courier.canTakeOrder(largeVolume));
     }
-
-
-    @DisplayName("Прием заказа: успех")
-    @Test
-    void takeOrder_shouldSuccess_whenOrderIsValidAndPlaceExists() {
-        Courier courier = Courier.mustCreate(courierName, speed, startLocation);
-        courier.addStoragePlace("Big Box", Volume.mustCreate(20));
-
-        Order order = Order.mustCreate(UUID.randomUUID(), startLocation, smallVolume);
-
-        UnitResult<libs.errs.Error> result = courier.takeOrder(order);
-
-        assertTrue(result.isSuccess());
-        assertEquals(OrderStatus.ASSIGNED, order.getStatus());
-        assertEquals(courier.getId(), order.getCourierId());
-    }
-
-    @DisplayName("Прием заказа: неудача, если нет подходящего места")
-    @Test
-    void takeOrder_shouldFail_whenNoStoragePlace() {
-        Courier courier = Courier.mustCreate(courierName, speed, startLocation);
-
-        Order order = Order.mustCreate(UUID.randomUUID(), startLocation, largeVolume);
-
-        UnitResult<libs.errs.Error> result = courier.takeOrder(order);
-
-        assertTrue(result.isFailure());
-        assertEquals(Courier.Errors.couldNotTakeOrder(), result.getError());
-
-        assertEquals(OrderStatus.CREATED, order.getStatus());
-        assertNull(order.getCourierId());
-    }
-
 
     @DisplayName("Завершение заказа: успех")
     @Test

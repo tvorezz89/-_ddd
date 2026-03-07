@@ -84,12 +84,6 @@ public class Courier extends Aggregate<UUID> {
             return UnitResult.failure(putResult.getError());
         }
 
-        var assignCourierResult = order.assignToCourier(this.id);
-        if (assignCourierResult.isFailure()) {
-            return UnitResult.failure(assignCourierResult.getError());
-
-        }
-
         return UnitResult.success();
     }
 
@@ -104,11 +98,6 @@ public class Courier extends Aggregate<UUID> {
         var extractResult = targetPlaceResult.getValue().extractOrder();
         if (extractResult.isFailure()) {
             return UnitResult.failure(extractResult.getError());
-        }
-
-        var orderCompleteResult = order.complete();
-        if (orderCompleteResult.isFailure()) {
-            return UnitResult.failure(orderCompleteResult.getError());
         }
 
         return UnitResult.success();

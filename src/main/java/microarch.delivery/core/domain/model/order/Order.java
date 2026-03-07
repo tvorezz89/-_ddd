@@ -78,6 +78,12 @@ public class Order extends Aggregate<UUID> {
                     "Назначить курьера можно только заказу со статусом CREATED"
             );
         }
+        public static Error canOnlDispatchCreatedOrder() {
+            return Error.of(
+                    "order.can.only.dispatch.created",
+                    "Распределить заказ между курьерами можно только со статусом CREATED"
+            );
+        }
 
         public static Error canOnlyCompleteAssignedOrder() {
             return Error.of(
