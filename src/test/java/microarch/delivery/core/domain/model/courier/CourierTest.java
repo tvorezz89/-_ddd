@@ -66,19 +66,14 @@ class CourierTest {
     @Test
     void canTakeOrder_shouldReturnSuccess_whenPlaceExists() {
         Courier courier = Courier.mustCreate(courierName, speed, startLocation);
-
-        Result<StoragePlace, libs.errs.Error> result = courier.canTakeOrder(smallVolume);
-
-        assertTrue(result.isSuccess());
+        assertTrue(courier.canTakeOrder(smallVolume));
     }
 
     @DisplayName("Поиск места для заказа: неудача, если места нет")
     @Test
     void canTakeOrder_shouldReturnFailure_whenNoPlaceFits() {
         Courier courier = Courier.mustCreate(courierName, speed, startLocation);
-        Result<StoragePlace, libs.errs.Error> result = courier.canTakeOrder(largeVolume);
-
-        assertTrue(result.isFailure());
+        assertFalse(courier.canTakeOrder(largeVolume));
     }
 
 
@@ -107,7 +102,7 @@ class CourierTest {
         UnitResult<libs.errs.Error> result = courier.takeOrder(order);
 
         assertTrue(result.isFailure());
-        assertEquals(Courier.Errors.noSuitableStoragePlace(), result.getError());
+        assertEquals(Courier.Errors.couldNotTakeOrder(), result.getError());
 
         assertEquals(OrderStatus.CREATED, order.getStatus());
         assertNull(order.getCourierId());

@@ -54,14 +54,16 @@ public class Courier extends Aggregate<UUID> {
         return UnitResult.success();
     }
 
-    /**
-     * Проверяет наличие свободного места для заказа заданного объёма.
-     *
-     * @param orderVolume объём заказа
-     * @return {@code Result.success} с первым подходящим {@link StoragePlace}, если место найдено;
-     * иначе {@code Result.failure} с ошибкой {@link Errors#noSuitableStoragePlace()}.
-     */
-    public Result<StoragePlace, Error> canTakeOrder(Volume orderVolume) {
+    public Boolean canTakeOrder(Volume orderVolume) {
+        for (StoragePlace place : this.storagePlaces) {
+            if (place.canPutOrder(orderVolume)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Result<StoragePlace, Error> getFreeStoragePlace(Volume orderVolume) {
         for (StoragePlace place : this.storagePlaces) {
             if (place.canPutOrder(orderVolume)) {
                 return Result.success(place);
@@ -70,16 +72,14 @@ public class Courier extends Aggregate<UUID> {
         return Result.failure(Errors.noSuitableStoragePlace());
     }
 
-
     public UnitResult<Error> takeOrder(Order order) {
         Objects.requireNonNull(order, "order");
 
-        var targetPlaceResult = canTakeOrder(order.getVolume());
-        if (targetPlaceResult.isFailure()) {
-            return UnitResult.failure(targetPlaceResult.getError());
+        if (!canTakeOrder(order.getVolume())) {
+            return UnitResult.failure(Errors.couldNotTakeOrder());
         }
 
-        var putResult = targetPlaceResult.getValue().putOrder(order.getId(), order.getVolume());
+        var putResult = getFreeStoragePlace(order.getVolume()).getValue().putOrder(order.getId(), order.getVolume());
         if (putResult.isFailure()) {
             return UnitResult.failure(putResult.getError());
         }
@@ -160,6 +160,13 @@ public class Courier extends Aggregate<UUID> {
             return Error.of(
                     "courier.no.suitable.storage",
                     "Не найдено свободного места хранения, способного вместить этот заказ"
+            );
+        }
+
+        public static Error couldNotTakeOrder() {
+            return Error.of(
+                    "could.not.take.order",
+                    "Не может взять заказа"
             );
         }
 
