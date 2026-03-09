@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static microarch.delivery.core.domain.model.courier.StoragePlace.DEFAULT_NAME;
+import static microarch.delivery.core.domain.model.courier.StoragePlace.DEFAULT_VOLUME;
+
 @Getter
 @Entity
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
@@ -37,7 +40,7 @@ public class Courier extends Aggregate<UUID> {
         this.name = name;
         this.speed = speed;
         this.location = location;
-        storagePlaces.add(StoragePlace.getDefault());
+        this.addStoragePlace(DEFAULT_NAME, DEFAULT_VOLUME);
     }
 
 
@@ -60,7 +63,9 @@ public class Courier extends Aggregate<UUID> {
         if (creationResult.isFailure()) {
             return UnitResult.failure(creationResult.getError());
         }
-        this.storagePlaces.add(creationResult.getValue());
+        var storagePlace = creationResult.getValue();
+        storagePlace.addCourier(this);
+        this.storagePlaces.add(storagePlace);
         return UnitResult.success();
     }
 

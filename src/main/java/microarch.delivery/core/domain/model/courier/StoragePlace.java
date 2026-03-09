@@ -28,6 +28,9 @@ public class StoragePlace extends BaseEntity<UUID> {
     @JoinColumn(name = "courier_id")
     private Courier courier;
 
+    public static final String DEFAULT_NAME = "Сумка";
+    public static final Volume DEFAULT_VOLUME = Volume.mustCreate(10);
+
 
     private StoragePlace(String name, Volume totalVolume) {
         super(UUID.randomUUID());
@@ -46,10 +49,6 @@ public class StoragePlace extends BaseEntity<UUID> {
 
     public static StoragePlace mustCreate(String name, Volume totalVolume) {
         return create(name, totalVolume).getValueOrThrow();
-    }
-
-    public static StoragePlace getDefault() {
-        return mustCreate("Сумка", Volume.mustCreate(10));
     }
 
     public boolean canPutOrder(Volume orderVolume) {
@@ -81,6 +80,11 @@ public class StoragePlace extends BaseEntity<UUID> {
     public boolean containsOrder(UUID orderId) {
         Objects.requireNonNull(orderId, "orderId");
         return !isEmpty() && this.orderId.equals(orderId);
+    }
+
+    public void addCourier(Courier courier){
+        Objects.requireNonNull(courier, "courier");
+        this.courier = courier;
     }
 
     public static final class Errors {
