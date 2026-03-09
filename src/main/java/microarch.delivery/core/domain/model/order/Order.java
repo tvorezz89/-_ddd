@@ -1,9 +1,12 @@
 package microarch.delivery.core.domain.model.order;
 
+import jakarta.persistence.*;
 import libs.ddd.Aggregate;
 import libs.errs.*;
 import libs.errs.Error;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.Location;
 import microarch.delivery.core.domain.Volume;
 
@@ -11,11 +14,18 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Getter
+@Table(name = "orders")
+@Entity
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class Order extends Aggregate<UUID> {
 
+    @Embedded
     private final Location location;
+    @Embedded
     private final Volume volume;
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    @Column(name = "courier_id")
     private UUID courierId;
 
     private Order(UUID id, Location location, Volume volume) {
@@ -78,6 +88,7 @@ public class Order extends Aggregate<UUID> {
                     "Назначить курьера можно только заказу со статусом CREATED"
             );
         }
+
         public static Error canOnlDispatchCreatedOrder() {
             return Error.of(
                     "order.can.only.dispatch.created",

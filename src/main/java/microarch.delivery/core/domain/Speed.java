@@ -1,20 +1,26 @@
 package microarch.delivery.core.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import libs.ddd.ValueObject;
 import libs.errs.Error;
 import libs.errs.Result;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
 
 @Getter
+@Embeddable
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class Speed extends ValueObject<Speed> {
 
     public static final int ZERO_SPEED  = 0;
     public static final int ZERO_DISTANCE = 0;
 
-
+    @Column(name = "speed")
     private final Integer speed;
 
     public static Result<Speed, libs.errs.Error> create(Integer speed) {

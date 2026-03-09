@@ -1,9 +1,12 @@
 package microarch.delivery.core.domain.model.courier;
 
+import jakarta.persistence.*;
 import libs.ddd.Aggregate;
 import libs.errs.*;
 import libs.errs.Error;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.Location;
 import microarch.delivery.core.domain.Speed;
 import microarch.delivery.core.domain.Volume;
@@ -15,11 +18,18 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Getter
+@Entity
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class Courier extends Aggregate<UUID> {
 
+    @Column(name = "name")
     private final String name;
+    @Embedded
     private final Speed speed;
+    @Embedded
     private Location location;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "courier_id")
     private final List<StoragePlace> storagePlaces = new ArrayList<>();
 
     private Courier(String name, Speed speed, Location location) {
