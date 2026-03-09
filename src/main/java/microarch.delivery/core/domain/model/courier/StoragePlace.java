@@ -4,6 +4,7 @@ import libs.ddd.BaseEntity;
 import libs.errs.*;
 import libs.errs.Error;
 import lombok.Getter;
+import microarch.delivery.core.domain.kernel.Volume;
 
 import java.util.UUID;
 
@@ -12,43 +13,42 @@ public class StoragePlace extends BaseEntity<UUID> {
 
     private String name;
 
-    private Integer totalVolume;
+    private Volume totalVolume;
 
     private UUID orderId;
 
     private StoragePlace() {
     }
 
-    private StoragePlace(String name, Integer totalVolume) {
+    private StoragePlace(String name, Volume totalVolume) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.totalVolume = totalVolume;
         this.orderId = null;
     }
 
-    public static Result<StoragePlace, Error> create(String name, int totalVolume) {
+    public static Result<StoragePlace, Error> create(String name, Volume volume) {
         var validatedName = Guard.againstNullOrEmpty(name, "name");
         if (validatedName != null) {
             return Result.failure(Error.of(validatedName.getCode(), validatedName.getMessage()));
         }
 
-        var validatedTotalVolume = Guard.againstLessOrEqual(totalVolume, 0, "totalVolume");
-        if (validatedTotalVolume != null) {
-            return Result.failure(Error.of(validatedTotalVolume.getCode(), validatedTotalVolume.getMessage()));
-        }
-
-        return Result.success(new StoragePlace(name, totalVolume));
+        return Result.success(new StoragePlace(name, volume));
     }
 
-    public Result<Boolean, Error> canStore(int volume) {
-        if (isOccupied() || volume > getTotalVolume()) {
+    public static StoragePlace getCreated(String name, Volume volume) {
+        return create(name, volume).getValue();
+    }
+
+    public Result<Boolean, Error> canStore(Volume volume) {
+        if (isOccupied() || volume.getVolume() > getTotalVolume().getVolume()) {
             return Result.success(false);
         }
 
         return Result.success(true);
     }
 
-    public UnitResult<Error> store(UUID orderId, int volume) {
+    public UnitResult<Error> store(UUID orderId, Volume volume) {
         if (orderId == null || !canStore(volume).getValue()) {
             return UnitResult.failure(Error.of("Unable.store",
                     "Unable to store an order. Already stored or volume is too large %s".formatted(volume)));
