@@ -2,6 +2,7 @@ package microarch.delivery.core.domain.model.courier;
 
 import libs.errs.Error;
 import libs.errs.Result;
+import microarch.delivery.core.domain.kernel.Volume;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -17,20 +18,14 @@ class StoragePlaceTest {
         var result = getStorageResult(name, totalVolume);
 
         assertThat(result.getValue().getName()).isEqualTo(name);
-        assertThat(result.getValue().getTotalVolume()).isEqualTo(totalVolume);
+        assertThat(result.getValue().getTotalVolume()).isEqualTo(Volume.create(totalVolume).getValue());
         assertThat(result.getValue().getOrderId()).isNull();
         assertThat(result.getValue().getId()).isNotNull();
     }
 
     @Test
     void create_whenValidationNameFailed_shouldReturnFailure() {
-        var result = StoragePlace.create(null, 0);
-        assertThat(result.isFailure()).isTrue();
-    }
-
-    @Test
-    void create_whenValidationTotalVolumeFailed_shouldReturnFailure() {
-        var result = StoragePlace.create("baggage", -5);
+        var result = StoragePlace.create(null, Volume.create(1).getValue());
         assertThat(result.isFailure()).isTrue();
     }
 
@@ -39,7 +34,7 @@ class StoragePlaceTest {
         var storage = getStorageResult().getValue();
 
         var currentVolume = 10;
-        var canStoreResult = storage.canStore(currentVolume);
+        var canStoreResult = storage.canStore(Volume.create(currentVolume).getValue());
 
         assertThat(canStoreResult.isSuccess()).isTrue();
         assertThat(canStoreResult.getValue()).isTrue();
@@ -50,7 +45,7 @@ class StoragePlaceTest {
         var storage = getStorageResult().getValue();
 
         var currentVolume = 20;
-        var canStoreResult = storage.canStore(currentVolume);
+        var canStoreResult = storage.canStore(Volume.create(currentVolume).getValue());
 
         assertThat(canStoreResult.isSuccess()).isTrue();
         assertThat(canStoreResult.getValue()).isFalse();
@@ -63,7 +58,7 @@ class StoragePlaceTest {
         var orderId = UUID.randomUUID();
         var currentVolume = 10;
 
-        var result = storage.store(orderId, currentVolume);
+        var result = storage.store(orderId, Volume.create(currentVolume).getValue());
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(storage.getOrderId()).isNotNull();
@@ -76,12 +71,12 @@ class StoragePlaceTest {
         var orderId = UUID.randomUUID();
         var currentVolume = 10;
 
-        storage.store(orderId, currentVolume);
+        storage.store(orderId, Volume.create(currentVolume).getValue());
 
         var anotherOrder = UUID.randomUUID();
         var anotherOrderVolume = 5;
 
-        var result = storage.store(anotherOrder, anotherOrderVolume);
+        var result = storage.store(anotherOrder, Volume.create(anotherOrderVolume).getValue());
 
         assertThat(result.isFailure()).isTrue();
     }
@@ -93,7 +88,7 @@ class StoragePlaceTest {
         var orderId = UUID.randomUUID();
         var currentVolume = 10;
 
-        storage.store(orderId, currentVolume);
+        storage.store(orderId, Volume.create(currentVolume).getValue());
         var result = storage.clear(orderId);
         assertThat(result.isSuccess()).isTrue();
         assertThat(storage.getOrderId()).isNull();
@@ -112,7 +107,7 @@ class StoragePlaceTest {
     }
 
     private Result<StoragePlace, Error> getStorageResult(String name, int totalVolume) {
-        var createResult = StoragePlace.create(name, totalVolume);
+        var createResult = StoragePlace.create(name, Volume.create(totalVolume).getValue());
         assertThat(createResult.isSuccess()).isTrue();
         return createResult;
     }
