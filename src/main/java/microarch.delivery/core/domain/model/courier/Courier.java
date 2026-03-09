@@ -1,10 +1,13 @@
 package microarch.delivery.core.domain.model.courier;
 
+import jakarta.persistence.*;
 import libs.ddd.Aggregate;
 import libs.errs.Error;
 import libs.errs.Result;
 import libs.errs.UnitResult;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.kernel.Location;
 import microarch.delivery.core.domain.kernel.Speed;
 import microarch.delivery.core.domain.kernel.Volume;
@@ -15,16 +18,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Entity
+@Table(name = "couriers")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Courier extends Aggregate<UUID> {
 
+    @Column(name = "name")
     private String name;
-    private Speed speed;
-    private Location location;
-    private List<StoragePlace> storagePlaces;
 
-    private Courier() {
-    }
+    @Embedded
+    private Speed speed;
+
+    @Embedded
+    private Location location;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "courier_id")
+    private List<StoragePlace> storagePlaces;
 
     private Courier(String name, Speed speed, Location location, List<StoragePlace> storagePlaces) {
         this.id = UUID.randomUUID();
@@ -82,6 +93,7 @@ public class Courier extends Aggregate<UUID> {
         if (storeResult.isFailure()) {
             return UnitResult.failure(storeResult.getError());
         }
+        order.manageToCourier(getId());
 
         return UnitResult.success();
     }

@@ -1,25 +1,36 @@
 package microarch.delivery.core.domain.model.order;
 
+import jakarta.persistence.*;
 import libs.ddd.Aggregate;
 import libs.errs.Error;
 import libs.errs.Result;
 import libs.errs.UnitResult;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.kernel.Location;
 import microarch.delivery.core.domain.kernel.Volume;
 
 import java.util.UUID;
 
+@Table(name = "orders")
+@Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends Aggregate<UUID> {
 
+    @Embedded
     private Location location;
-    private Volume volume;
-    private OrderStatus status;
-    private UUID courierId;
 
-    private Order() {
-    }
+    @Embedded
+    private Volume volume;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
+    @Column(name = "courier_id")
+    private UUID courierId;
 
     private Order(UUID id, Location location, Volume volume) {
         this.id = id;
