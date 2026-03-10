@@ -1,24 +1,33 @@
 package microarch.delivery.core.domain.model.courier;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import libs.ddd.BaseEntity;
 import libs.errs.*;
 import libs.errs.Error;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.kernel.Volume;
 
 import java.util.UUID;
 
+@Entity
+@Table(name = "storage_places")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StoragePlace extends BaseEntity<UUID> {
 
+    @Column(name = "name")
     private String name;
 
+    @Embedded
     private Volume totalVolume;
 
+    @Column(name = "order_id")
     private UUID orderId;
-
-    private StoragePlace() {
-    }
 
     private StoragePlace(String name, Volume totalVolume) {
         this.id = UUID.randomUUID();

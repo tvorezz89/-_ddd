@@ -28,8 +28,7 @@ public class OrderManageServiceImpl implements OrderManageService {
             return Result.failure(GeneralErrors.valueIsInvalid("order status", order.getStatus()));
         }
 
-        var foundCourierOpt = couriers.stream()
-                .filter(courier -> courier.canTakeAnOrder(order).getValue())
+        var foundCourierOpt = couriers.stream().filter(courier -> courier.canTakeAnOrder(order).getValue())
                 .min(Comparator.comparing(courier -> courier.movesCount(order.getLocation()).getValue()));
 
         if (foundCourierOpt.isEmpty()) {

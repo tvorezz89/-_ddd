@@ -1,6 +1,7 @@
 package microarch.delivery.core.domain.kernel;
 
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import libs.ddd.ValueObject;
 import libs.errs.Error;
 import libs.errs.Guard;
@@ -10,12 +11,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Location extends ValueObject<Location> {
 
+    @Column(name = "location_x")
     private int x;
+    @Column(name = "location_y")
     private int y;
 
     public static Result<Location, Error> create(int x, int y) {

@@ -1,20 +1,24 @@
 package microarch.delivery.core.domain.kernel;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import libs.ddd.ValueObject;
 import libs.errs.Error;
 import libs.errs.Guard;
 import libs.errs.Result;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Speed extends ValueObject<Speed> {
 
+    @Column(name = "speed")
     private Integer speed;
-
-    private Speed() {
-    }
 
     private Speed(Integer speed) {
         this.speed = speed;
