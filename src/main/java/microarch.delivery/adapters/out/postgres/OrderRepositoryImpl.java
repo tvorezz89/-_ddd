@@ -27,6 +27,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public void updateAll(List<Order> orders) {
+        repository.saveAll(orders);
+    }
+
+    @Override
     public Optional<Order> findById(UUID id) {
         return repository.findById(id);
     }

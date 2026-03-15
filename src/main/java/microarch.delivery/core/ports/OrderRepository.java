@@ -12,6 +12,8 @@ public interface OrderRepository {
 
     void update(Order order);
 
+    void updateAll(List<Order> orders);
+
     Optional<Order> findById(UUID id);
 
     Optional<Order> findAnyByStatusCreated();

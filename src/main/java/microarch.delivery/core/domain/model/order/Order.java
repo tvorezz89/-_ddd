@@ -49,7 +49,6 @@ public class Order extends Aggregate<UUID> {
         if (volume == null) {
             throw new IllegalArgumentException("volume is null");
         }
-
         return Result.success(new Order(id, location, volume));
     }
 
