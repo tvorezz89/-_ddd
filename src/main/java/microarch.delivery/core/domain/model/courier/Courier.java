@@ -1,9 +1,12 @@
 package microarch.delivery.core.domain.model.courier;
 
+import jakarta.persistence.*;
 import libs.ddd.Aggregate;
 import libs.errs.*;
 import libs.errs.Error;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.Location;
 import microarch.delivery.core.domain.Speed;
 import microarch.delivery.core.domain.Volume;
@@ -14,12 +17,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static microarch.delivery.core.domain.model.courier.StoragePlace.DEFAULT_NAME;
+import static microarch.delivery.core.domain.model.courier.StoragePlace.DEFAULT_VOLUME;
+
 @Getter
+@Entity
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class Courier extends Aggregate<UUID> {
 
+    @Column(name = "name")
     private final String name;
+    @Embedded
     private final Speed speed;
+    @Embedded
     private Location location;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "courier_id")
     private final List<StoragePlace> storagePlaces = new ArrayList<>();
 
     private Courier(String name, Speed speed, Location location) {
@@ -27,7 +40,7 @@ public class Courier extends Aggregate<UUID> {
         this.name = name;
         this.speed = speed;
         this.location = location;
-        storagePlaces.add(StoragePlace.getDefault());
+        this.addStoragePlace(DEFAULT_NAME, DEFAULT_VOLUME);
     }
 
 
@@ -50,7 +63,9 @@ public class Courier extends Aggregate<UUID> {
         if (creationResult.isFailure()) {
             return UnitResult.failure(creationResult.getError());
         }
-        this.storagePlaces.add(creationResult.getValue());
+        var storagePlace = creationResult.getValue();
+        storagePlace.addCourier(this);
+        this.storagePlaces.add(storagePlace);
         return UnitResult.success();
     }
 
