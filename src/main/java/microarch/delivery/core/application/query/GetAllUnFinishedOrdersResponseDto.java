@@ -7,6 +7,7 @@ import lombok.Setter;
 import microarch.delivery.core.application.query.dto.LocationDto;
 
 import java.util.List;
+import java.util.UUID;
 
 public record GetAllUnFinishedOrdersResponseDto(
 
@@ -20,7 +21,7 @@ public record GetAllUnFinishedOrdersResponseDto(
     @Getter
     @Setter
     public static class OrderResponse {
-        private String id;
+        private UUID id;
         private LocationDto location;
     }
 }

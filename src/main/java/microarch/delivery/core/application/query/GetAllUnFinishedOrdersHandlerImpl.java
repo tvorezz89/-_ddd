@@ -28,7 +28,7 @@ public class GetAllUnFinishedOrdersHandlerImpl implements GetAllUnFinishedOrders
 
     private GetAllUnFinishedOrdersResponseDto.OrderResponse toDto(Order order) {
         return new GetAllUnFinishedOrdersResponseDto.OrderResponse(
-                order.getId().toString(),
+                order.getId(),
                 new LocationDto(order.getLocation().getX(), order.getLocation().getY())
         );
     }
