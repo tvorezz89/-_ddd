@@ -158,6 +158,11 @@ public class Courier extends Aggregate<UUID> {
         return UnitResult.success();
     }
 
+    public Boolean hasReached(Location target){
+        Objects.requireNonNull(target, "target");
+        return this.location.equals(target);
+    }
+
     public static final class Errors {
 
         public static Error noSuitableStoragePlace() {

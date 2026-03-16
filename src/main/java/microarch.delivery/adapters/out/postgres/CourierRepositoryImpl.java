@@ -34,4 +34,9 @@ public class CourierRepositoryImpl implements CourierRepository {
     public List<Courier> findAllFreeCouriers() {
         return jpaRepository.findAllFreeCouriers();
     }
+
+    @Override
+    public List<Courier> findAll() {
+        return jpaRepository.findAll();
+    }
 }

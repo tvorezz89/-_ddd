@@ -16,6 +16,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     private final OrderJpaRepository jpaRepository;
 
+    private static final List<OrderStatus> UNFINISHED_ORDERS_STATUS = List.of(OrderStatus.CREATED, OrderStatus.ASSIGNED);
+
     @Override
     public Order save(Order order) {
         return jpaRepository.save(order);
@@ -39,5 +41,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> findAllAssigned() {
         return jpaRepository.findAllByStatus(OrderStatus.ASSIGNED);
+    }
+
+    @Override
+    public List<Order> findAllUnfinished() {
+        return jpaRepository.findAllByStatusIn(UNFINISHED_ORDERS_STATUS);
     }
 }

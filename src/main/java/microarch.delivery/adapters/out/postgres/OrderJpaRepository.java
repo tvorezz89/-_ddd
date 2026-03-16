@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface OrderJpaRepository extends JpaRepository<Order,UUID> {
+public interface OrderJpaRepository extends JpaRepository<Order, UUID> {
 
     Optional<Order> findFirstByStatus(OrderStatus status);
 
     List<Order> findAllByStatus(OrderStatus orderStatus);
+
+    List<Order> findAllByStatusIn(List<OrderStatus> orderStatuses);
 }

@@ -16,4 +16,6 @@ public interface CourierRepository {
 
     List<Courier> findAllFreeCouriers();
 
+    List<Courier> findAll();
+
 }
