@@ -1,10 +1,11 @@
 package microarch.delivery.core.application.command;
 
 import libs.errs.Error;
-import libs.errs.UnitResult;
+import libs.errs.Result;
+import java.util.UUID;
 
 public interface CreateOrderCommandHandler {
 
-    UnitResult<Error> handle(CreateOrderCommand command);
+    Result<UUID, Error> handle(CreateOrderCommand command);
 
 }
