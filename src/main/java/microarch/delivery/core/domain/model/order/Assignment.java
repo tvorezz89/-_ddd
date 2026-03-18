@@ -22,6 +22,8 @@ import java.util.UUID;
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public final class Assignment extends BaseEntity<UUID> {
 
+    public static final int MAX_DISTANCE_FOR_COMPLETION = 1;
+
     @Column(name = "order_id")
     @Getter
     private final UUID orderId;

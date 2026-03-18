@@ -6,11 +6,14 @@ import microarch.delivery.core.domain.model.Volume;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisplayName("Assignment Entity")
 class AssignmentTest {
@@ -92,11 +95,29 @@ class AssignmentTest {
     @DisplayName("completeOrderByCourierLocation()")
     class CompleteOrder {
 
+        @ParameterizedTest(name = "should succeed when courier location is ({0}, {1})")
+        @CsvSource({
+                "5, 5",
+                "5, 6",
+                "6, 5"
+        })
+        void shouldSucceedWhenCourierIsCloseEnough(int courierX, int courierY) {
+            var assignment = Assignment.mustCreate(ORDER_ID, VOLUME, Location.mustCreate(5, 5));
+            var courierLocation = Location.mustCreate(courierX, courierY);
+
+            var result = assignment.completeOrderByCourierLocation(courierLocation);
+
+            assertThat(result.isSuccess()).isTrue();
+            assertThat(assignment.getStatus()).isEqualTo(Status.COMPLETED);
+        }
+
         @Test
         @DisplayName("should fail when courier is too far (distance = 2)")
         void shouldFailWhenCourierTooFar() {
             var assignment = Assignment.mustCreate(ORDER_ID, VOLUME, Location.mustCreate(5, 5));
             var courierLocation = Location.mustCreate(5, 7);
+            assertNotNull(assignment.getLocation());
+            assertThat(assignment.getLocation().calculateDistance(courierLocation)).isEqualTo(2);
 
             var result = assignment.completeOrderByCourierLocation(courierLocation);
 
