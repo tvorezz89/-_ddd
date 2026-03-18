@@ -159,8 +159,8 @@ class LocationTest {
     }
 
     @Nested
-    @DisplayName("sameAsLocation()")
-    class SameAsLocation {
+    @DisplayName("equals() / hashcode()")
+    class ValueObjectEquality {
 
         @Test
         @DisplayName("should return true for locations with identical coordinates")
@@ -168,7 +168,7 @@ class LocationTest {
             var a = Location.mustCreate(5, 5);
             var b = Location.mustCreate(5, 5);
 
-            assertThat(a.sameAsLocation(b)).isTrue();
+            assertThat(a).isEqualTo(b);
         }
 
         @Test
@@ -176,7 +176,7 @@ class LocationTest {
         void shouldReturnTrueForSameInstance() {
             var location = Location.mustCreate(3, 7);
 
-            assertThat(location.sameAsLocation(location)).isTrue();
+            assertThat(location).isEqualTo(location);
         }
 
         @Test
@@ -185,7 +185,7 @@ class LocationTest {
             var a = Location.mustCreate(3, 5);
             var b = Location.mustCreate(4, 5);
 
-            assertThat(a.sameAsLocation(b)).isFalse();
+            assertThat(a).isNotEqualTo(b);
         }
 
         @Test
@@ -194,7 +194,7 @@ class LocationTest {
             var a = Location.mustCreate(5, 3);
             var b = Location.mustCreate(5, 4);
 
-            assertThat(a.sameAsLocation(b)).isFalse();
+            assertThat(a).isNotEqualTo(b);
         }
 
         @Test
@@ -203,7 +203,7 @@ class LocationTest {
             var a = Location.mustCreate(1, 1);
             var b = Location.mustCreate(10, 10);
 
-            assertThat(a.sameAsLocation(b)).isFalse();
+            assertThat(a).isNotEqualTo(b);
         }
 
         @Test
@@ -212,7 +212,7 @@ class LocationTest {
             var a = Location.mustCreate(2, 8);
             var b = Location.mustCreate(2, 8);
 
-            assertThat(a.sameAsLocation(b)).isEqualTo(b.sameAsLocation(a));
+            assertThat(a.equals(b)).isEqualTo(b.equals(a));
         }
 
         @Test
@@ -221,30 +221,7 @@ class LocationTest {
             var a = Location.mustCreate(1, 3);
             var b = Location.mustCreate(7, 9);
 
-            assertThat(a.sameAsLocation(b)).isEqualTo(b.sameAsLocation(a));
-        }
-    }
-
-    @Nested
-    @DisplayName("Value Object equality (equals / hashCode)")
-    class ValueObjectEquality {
-
-        @Test
-        @DisplayName("equal locations should be equal via equals()")
-        void equalLocationsShouldBeEqual() {
-            var a = Location.mustCreate(4, 6);
-            var b = Location.mustCreate(4, 6);
-
-            assertThat(a).isEqualTo(b);
-        }
-
-        @Test
-        @DisplayName("different locations should not be equal")
-        void differentLocationsShouldNotBeEqual() {
-            var a = Location.mustCreate(4, 6);
-            var b = Location.mustCreate(6, 4);
-
-            assertThat(a).isNotEqualTo(b);
+            assertThat(a.equals(b)).isEqualTo(b.equals(a));
         }
 
         @Test

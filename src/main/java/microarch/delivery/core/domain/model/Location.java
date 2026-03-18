@@ -48,10 +48,6 @@ public class Location extends ValueObject<Location> {
         return List.of(this.latitude, this.longitude);
     }
 
-    public boolean sameAsLocation(final Location location) {
-        return this.latitude == location.latitude && this.longitude == location.longitude;
-    }
-
     public int calculateDistance(final Location location) {
         return Math.abs(latitude - location.latitude) + Math.abs(longitude - location.longitude);
     }
