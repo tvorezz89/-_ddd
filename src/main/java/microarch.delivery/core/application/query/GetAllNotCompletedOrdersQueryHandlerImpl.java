@@ -15,7 +15,7 @@ import java.util.Set;
 public class GetAllNotCompletedOrdersQueryHandlerImpl implements GetAllNotCompletedOrdersQueryHandler {
 
     private static final String QUERY = """
-            select o
+            select o.id, o.location
             from Order o
             where o.status in (:statuses)
             """;
