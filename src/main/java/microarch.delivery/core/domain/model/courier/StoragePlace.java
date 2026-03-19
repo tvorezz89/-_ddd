@@ -10,31 +10,29 @@ import java.util.UUID;
 
 public class StoragePlace extends BaseEntity<UUID> {
     private String name;
-    private Integer totalVolume;
+    private Volume totalVolume;
     private UUID orderId;
 
     private StoragePlace() {
     }
 
-    private StoragePlace(String name, Integer totalVolume) {
+    private StoragePlace(String name, Volume totalVolume) {
         super(UUID.randomUUID());
         this.name = name;
         this.totalVolume = totalVolume;
     }
 
-    public static Result<StoragePlace, Error> create(String name, Integer totalVolume) {
+    public static Result<StoragePlace, Error> create(String name, Volume totalVolume) {
         if (name == null)
             return Result.failure(GeneralErrors.valueIsRequired("name"));
         if (totalVolume == null)
             return Result.failure(GeneralErrors.valueIsRequired("totalVolume"));
-        if (totalVolume <= 0)
-            return Result.failure(GeneralErrors.valueMustBeGreaterThan("totalVolume", totalVolume, 0));
 
         return Result.success(new StoragePlace(name, totalVolume));
     }
 
     public Result<Boolean, Error> canStore(int volume) {
-        if (volume > this.totalVolume)
+        if (volume > this.totalVolume.getVolume())
             return Result.failure(Error.of("volume.should.be.less.than.totalVolume",
                     "Volume should be less than totalVolume of storage place"));
         if (isOccupied())
@@ -54,6 +52,11 @@ public class StoragePlace extends BaseEntity<UUID> {
 
     private Boolean isOccupied() {
         return orderId != null;
+    }
+
+    public Result<Void, Error> reset() {
+        this.orderId = null;
+        return Result.success();
     }
 
 }
