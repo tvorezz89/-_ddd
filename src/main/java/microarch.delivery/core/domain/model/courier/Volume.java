@@ -11,7 +11,8 @@ public class Volume extends ValueObject<Volume> {
 
     private Integer volume;
 
-    private Volume() {};
+    private Volume() {
+    };
 
     private Volume(Integer volume) {
         this.volume = volume;
