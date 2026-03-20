@@ -41,7 +41,4 @@ public class MoveCouriersCommandHandlerImpl implements MoveCouriersCommandHandle
 
         return UnitResult.success();
     }
-
-    // todo: удалить
-    // private static final Error ORDERS_NOT_FOUND = Error.of("orders.not.found", "Orders not found");
 }
