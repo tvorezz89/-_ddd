@@ -344,4 +344,66 @@ class LocationTest {
             assertThat(a.calculateDistance(b)).isEqualTo(expected);
         }
     }
+
+    @Nested
+    @DisplayName("isInReachingDistance()")
+    class IsInReachingDistance {
+
+        @Test
+        @DisplayName("should return false when distance exceeds MAX_DISTANCE_FOR_REACHING")
+        void shouldReturnFalseWhenTooFar() {
+            var a = Location.mustCreate(5, 5);
+            var b = Location.mustCreate(5, 7);
+
+            assertThat(a.isInReachingDistance(b)).isFalse();
+        }
+
+        @ParameterizedTest(name = "neighbor: latitude={0}, longitude={1}")
+        @DisplayName("should return true for diagonal neighbor (distance = 2)")
+        @CsvSource({
+                "4, 4",
+                "6, 4",
+                "4, 6",
+                "6, 6"
+        })
+        void shouldReturnTrueForDiagonalNeighbor(int otherX, int otherY) {
+            var a = Location.mustCreate(5, 5);
+            var b = Location.mustCreate(otherX, otherY);
+
+            assertThat(a.isInReachingDistance(b)).isTrue();
+        }
+
+        @ParameterizedTest(name = "neighbor: latitude={0}, longitude={1}")
+        @DisplayName("should return true for lateral neighbor (distance = 1)")
+        @CsvSource({
+                "5, 4",
+                "6, 5",
+                "4, 5",
+                "5, 6"
+        })
+        void shouldReturnTrueForLateralNeighbor(int otherX, int otherY) {
+            var a = Location.mustCreate(5, 5);
+            var b = Location.mustCreate(otherX, otherY);
+
+            assertThat(a.isInReachingDistance(b)).isTrue();
+        }
+
+        @Test
+        @DisplayName("should return false for maximum possible distance")
+        void shouldReturnFalseForMaxPossibleDistance() {
+            var a = Location.mustCreate(1, 1);
+            var b = Location.mustCreate(10, 10);
+
+            assertThat(a.isInReachingDistance(b)).isFalse();
+        }
+
+        @Test
+        @DisplayName("should be symmetric — a.inReach(b) == b.inReach(a)")
+        void shouldBeSymmetric() {
+            var a = Location.mustCreate(5, 5);
+            var b = Location.mustCreate(5, 6);
+
+            assertThat(a.isInReachingDistance(b)).isEqualTo(b.isInReachingDistance(a));
+        }
+    }
 }

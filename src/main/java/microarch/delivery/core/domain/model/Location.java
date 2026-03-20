@@ -20,6 +20,7 @@ import java.util.List;
 public class Location extends ValueObject<Location> {
     private static final int MIN_VALUE = 1;
     private static final int MAX_VALUE = 10;
+    public static final int MAX_DISTANCE_FOR_REACHING = 1;
 
     @Column(name = "latitude")
     private final int latitude;
@@ -50,5 +51,11 @@ public class Location extends ValueObject<Location> {
 
     public int calculateDistance(final Location location) {
         return Math.abs(latitude - location.latitude) + Math.abs(longitude - location.longitude);
+    }
+
+    public boolean isInReachingDistance(final Location location) {
+        int diffLat = Math.abs(this.getLatitude() - location.getLatitude());
+        int diffLong = Math.abs(this.getLongitude() - location.getLongitude());
+        return Math.max(diffLat, diffLong) <= MAX_DISTANCE_FOR_REACHING;
     }
 }
