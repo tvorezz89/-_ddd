@@ -57,8 +57,8 @@ public class CourierController implements ApiApi {
 
     @Override
     public ResponseEntity<CreateOrderResponse> createOrder() {
-        var createCommandResult = CreateOrderCommand.create(UUID.randomUUID(), "Россия", "Москва", "Несуществующая",
-                "1", "2", 5);
+        var createCommandResult = CreateOrderCommand.create(UUID.randomUUID(), "Россия", "Москва", "Айтишная", "1", "2",
+                5);
 
         if (createCommandResult.isFailure()) {
             return ResponseEntity.badRequest().build();
