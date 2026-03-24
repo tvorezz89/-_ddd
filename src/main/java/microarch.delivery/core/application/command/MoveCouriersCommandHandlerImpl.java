@@ -1,5 +1,6 @@
 package microarch.delivery.core.application.command;
 
+import microarch.delivery.core.ports.DomainEventPublisher;
 import libs.errs.Error;
 import libs.errs.UnitResult;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,10 @@ public class MoveCouriersCommandHandlerImpl implements MoveCouriersCommandHandle
     private final OrderRepository orderRepository;
     private final CourierRepository courierRepository;
     private final CourierMoveService courierMoveService;
+    private final DomainEventPublisher eventPublisher;
 
-    @Override
     @Transactional
+    @Override
     public UnitResult<Error> handle(MoveCouriersCommand command) {
         var orders = orderRepository.findAllByStatusAssigned();
         var courierIds = orders.stream().map(Order::getCourierId).toList();
@@ -39,6 +41,7 @@ public class MoveCouriersCommandHandlerImpl implements MoveCouriersCommandHandle
         orderRepository.updateAll(orders);
         courierRepository.updateAll(couriersMap.values());
 
+        eventPublisher.publish(orders);
         return UnitResult.success();
     }
 }

@@ -2,6 +2,7 @@ package microarch.delivery.core.ports;
 
 import microarch.delivery.core.domain.model.order.Order;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,7 +13,7 @@ public interface OrderRepository {
 
     void update(Order order);
 
-    void updateAll(List<Order> orders);
+    void updateAll(Collection<Order> orders);
 
     Optional<Order> findById(UUID id);
 

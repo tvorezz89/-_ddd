@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.kernel.Location;
 import microarch.delivery.core.domain.kernel.Volume;
+import microarch.delivery.core.domain.model.order.events.OrderCompletedDomainEvent;
+import microarch.delivery.core.domain.model.order.events.OrderCreatedDomainEvent;
 
 import java.util.UUID;
 
@@ -37,6 +39,8 @@ public class Order extends Aggregate<UUID> {
         this.location = location;
         this.volume = volume;
         this.status = OrderStatus.CREATED;
+
+        raiseDomainEvent(new OrderCreatedDomainEvent(this));
     }
 
     public static Result<Order, Error> create(UUID id, Location location, Volume volume) {
@@ -79,6 +83,7 @@ public class Order extends Aggregate<UUID> {
 
         changeStatus(OrderStatus.ASSIGNED);
 
+        raiseDomainEvent(new OrderCompletedDomainEvent(this));
         return UnitResult.success();
     }
 

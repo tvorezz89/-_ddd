@@ -18,10 +18,7 @@ public class BasketConsumer {
 
     private final CreateOrderCommandHandler handler;
 
-    @KafkaListener(
-            topics = "${app.kafka.baskets-events-topic}",
-            groupId = "${spring.kafka.consumer.group-id}"
-    )
+    @KafkaListener(topics = "${app.kafka.baskets-events-topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void listen(String message) {
         log.info("Received message: {}", message);
 
@@ -31,15 +28,9 @@ public class BasketConsumer {
 
             var event = eventBuilder.build();
 
-            var command = CreateOrderCommand.create(
-                    UUID.randomUUID(),
-                    event.getAddress().getCountry(),
-                    event.getAddress().getCity(),
-                    event.getAddress().getStreet(),
-                    event.getAddress().getHouse(),
-                    event.getAddress().getApartment(),
-                    event.getVolume()
-            );
+            var command = CreateOrderCommand.create(UUID.randomUUID(), event.getAddress().getCountry(),
+                    event.getAddress().getCity(), event.getAddress().getStreet(), event.getAddress().getHouse(),
+                    event.getAddress().getApartment(), event.getVolume());
 
             if (command.isFailure()) {
                 log.error("Invalid message: {}", message);

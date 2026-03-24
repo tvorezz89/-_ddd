@@ -6,6 +6,7 @@ import microarch.delivery.core.domain.model.order.OrderStatus;
 import microarch.delivery.core.ports.OrderRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void updateAll(List<Order> orders) {
+    public void updateAll(Collection<Order> orders) {
         repository.saveAll(orders);
     }
 
