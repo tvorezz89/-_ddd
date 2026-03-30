@@ -49,4 +49,12 @@ public class Location extends ValueObject<Location> {
     public Result<Integer, Error> distanceTo(Location target) {
         return Result.success(Math.abs(this.x - target.x) + Math.abs(this.y - target.y));
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }

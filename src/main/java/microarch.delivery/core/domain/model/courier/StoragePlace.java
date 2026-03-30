@@ -59,4 +59,12 @@ public class StoragePlace extends BaseEntity<UUID> {
         return Result.success();
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getOrderId() {
+        return orderId;
+    }
+
 }
