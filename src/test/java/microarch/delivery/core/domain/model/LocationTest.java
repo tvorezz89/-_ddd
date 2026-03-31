@@ -96,7 +96,7 @@ class LocationTest {
     void calculateDistance_shouldReturnZero_whenLocationsAreEqual() {
         Location a = Location.create(5, 5).getValue();
         Location b = Location.create(5, 5).getValue();
-        assertThat(Location.calculateDistance(a, b)).isEqualTo(0);
+        assertThat(a.calculateDistance(b)).isEqualTo(0);
     }
 
     @Test
@@ -104,13 +104,13 @@ class LocationTest {
         // 2 шага по X + 3 шага по Y = 5
         Location a = Location.create(1, 1).getValue();
         Location b = Location.create(3, 4).getValue();
-        assertThat(Location.calculateDistance(a, b)).isEqualTo(5);
+        assertThat(a.calculateDistance(b)).isEqualTo(5);
     }
 
     @Test
     void calculateDistance_shouldBeSymmetric() {
         Location a = Location.create(2, 3).getValue();
         Location b = Location.create(7, 6).getValue();
-        assertThat(Location.calculateDistance(a, b)).isEqualTo(Location.calculateDistance(b, a));
+        assertThat(a.calculateDistance(b)).isEqualTo(b.calculateDistance(a));
     }
 }

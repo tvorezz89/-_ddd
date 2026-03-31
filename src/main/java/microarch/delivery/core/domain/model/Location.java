@@ -31,8 +31,8 @@ public class Location extends ValueObject<Location> {
         return Result.success(location);
     }
 
-    public static int calculateDistance(Location location1, Location location2) {
-        return Math.abs(location1.x - location2.x) + Math.abs(location1.y - location2.y);
+    public int calculateDistance(Location location2) {
+        return Math.abs(this.x - location2.x) + Math.abs(this.y - location2.y);
     }
 
     @Override
