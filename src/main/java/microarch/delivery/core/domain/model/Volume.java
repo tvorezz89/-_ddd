@@ -19,8 +19,8 @@ public class Volume extends ValueObject<Volume> {
     private final int volume;
 
     public static Result<Volume, Error> create(int volume) {
-        if (volume < 0 || volume > 10)
-            return Result.failure(GeneralErrors.valueIsOutOfRange("volume", volume, 0, 10));
+        if (volume < 0)
+            return Result.failure(GeneralErrors.valueMustBeGreaterThan("volume", volume, 0));
 
         Volume vol = new Volume(volume);
 

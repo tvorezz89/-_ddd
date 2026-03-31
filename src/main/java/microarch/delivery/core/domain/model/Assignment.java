@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Getter
-@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Assignment extends BaseEntity<UUID> {
 
