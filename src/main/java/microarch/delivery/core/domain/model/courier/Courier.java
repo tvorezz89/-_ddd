@@ -57,7 +57,10 @@ public class Courier extends Aggregate<UUID> {
         if (assignment.isFailure()) {
             return Result.failure(assignment.getError());
         }
-
+        var assignOrder = order.assign();
+        if (assignOrder.isFailure()) {
+            return Result.failure(assignOrder.getError());
+        }
         this.assignments.add(assignment.getValue());
         return Result.success(this);
     }
@@ -79,7 +82,7 @@ public class Courier extends Aggregate<UUID> {
         this.location = location;
     }
 
-    private boolean canTakeOrder(Order order) {
+    public boolean canTakeOrder(Order order) {
         return this.assignments.stream().map(Assignment::getVolume).mapToInt(Volume::getVolume).sum()
                 + order.getVolume().getVolume() <= this.maxVolume.getVolume();
     }
