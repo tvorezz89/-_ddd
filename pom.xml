@@ -197,7 +197,10 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.19.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -308,7 +311,8 @@
                         <configuration>
                             <inputSpec>https://gitlab.com/microarch-ru/ddd-in-practice/system-design/-/raw/main/services/delivery/contracts/openapi.yml?ref_type=heads</inputSpec>
                             <generatorName>spring</generatorName>
-                            <output>${project.build.directory}/generated-sources/openapi</output>
+<!--                            <output>${project.build.directory}/generated-sources/openapi</output>-->
+                            <output>${project.basedir}</output>
                             <apiPackage>microarch.delivery.adapters.in.http.api</apiPackage>
                             <modelPackage>microarch.delivery.adapters.in.http.model</modelPackage>
 
@@ -318,7 +322,7 @@
                                 <skipPom>true</skipPom>
                                 <generateApiTests>false</generateApiTests>
                                 <generateModelTests>false</generateModelTests>
-                                <useTags>true</useTags>
+<!--                                <useTags>true</useTags>-->
                             </configOptions>
 
                             <globalProperties>
