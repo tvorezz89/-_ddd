@@ -5,6 +5,8 @@ import microarch.delivery.core.domain.model.order.OrderStatus;
 import microarch.delivery.core.ports.OrderRepository;
 import org.springframework.stereotype.Repository;
 
+import microarch.delivery.core.domain.model.order.OrderStatus;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,5 +38,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> findAllAssignedOrders() {
         return this.jpa.findAllByStatus(OrderStatus.ASSIGNED);
+    }
+
+    @Override
+    public List<Order> findAllNotCompleted() {
+        return this.jpa.findAllByStatusIn(List.of(OrderStatus.CREATED, OrderStatus.ASSIGNED));
     }
 }
