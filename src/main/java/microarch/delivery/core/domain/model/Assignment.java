@@ -1,5 +1,12 @@
 package microarch.delivery.core.domain.model;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import libs.ddd.BaseEntity;
 import libs.errs.Error;
 import libs.errs.GeneralErrors;
@@ -14,13 +21,25 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Getter
+@Entity
+@Table(name = "assignments")
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Assignment extends BaseEntity<UUID> {
 
+    @Column(name = "order_id")
     private UUID orderId;
+
+    @Embedded
+    @AttributeOverride(name = "volume", column = @Column(name = "volume"))
     private Volume volume;
+
+    @Embedded
+    @AttributeOverride(name = "x", column = @Column(name = "location_x"))
+    @AttributeOverride(name = "y", column = @Column(name = "location_y"))
     private Location location;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     public static Result<Assignment, Error> create(UUID orderId, Volume volume, Location location) {

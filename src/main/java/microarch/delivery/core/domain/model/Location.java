@@ -8,11 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import jakarta.persistence.Embeddable;
 import libs.ddd.ValueObject;
 
 import java.util.List;
 
 @Getter
+@Embeddable
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Location extends ValueObject<Location> {

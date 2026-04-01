@@ -1,5 +1,12 @@
 package microarch.delivery.core.domain.model.order;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import libs.ddd.Aggregate;
 import libs.errs.Error;
 import libs.errs.Guard;
@@ -15,12 +22,22 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Getter
+@Entity
+@Table(name = "orders")
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Order extends Aggregate<UUID> {
 
+    @Embedded
+    @AttributeOverride(name = "x", column = @Column(name = "location_x"))
+    @AttributeOverride(name = "y", column = @Column(name = "location_y"))
     private Location location;
+
+    @Embedded
+    @AttributeOverride(name = "volume", column = @Column(name = "volume"))
     private Volume volume;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     private Order(UUID id, Location location, Volume volume) {
