@@ -62,12 +62,17 @@ public class Courier extends Aggregate<UUID> {
         return Result.success(this);
     }
 
-    public Result<Assignment, Error> finishAssignment(Assignment assignment) {
-        var result = assignment.finish(this.location);
-        if (result.isSuccess()) {
-            this.assignments.remove(assignment);
+    public Result<Courier, Error> finishAssignment(UUID orderId) {
+        var assignment = this.assignments.stream().filter(a -> a.getOrderId().equals(orderId)).findFirst().orElse(null);
+        if (assignment == null) {
+            return Result.failure(Errors.assignmentNotFound());
         }
-        return result;
+        var result = assignment.finish(this.location);
+        if (result.isFailure()) {
+            return Result.failure(result.getError());
+        }
+        this.assignments.remove(assignment);
+        return Result.success(this);
     }
 
     public void changeLocation(Location location) {
@@ -82,6 +87,10 @@ public class Courier extends Aggregate<UUID> {
     public static class Errors {
         public static Error cantTakeOrder() {
             return Error.of("courier.can.not.take.order", "Не может взять заказ");
+        }
+
+        public static Error assignmentNotFound() {
+            return Error.of("courier.assignment.not.found", "Назначение не найдено");
         }
 
     }

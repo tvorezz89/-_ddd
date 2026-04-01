@@ -102,8 +102,7 @@ class CourierTest {
         Courier courier = Courier.create(NAME, LOCATION).getValue();
         Order order = createOrder(5);
         courier.takeOrder(order);
-        Assignment assignment = courier.getAssignments().get(0);
-        Result<Assignment, Error> result = courier.finishAssignment(assignment);
+        Result<Courier, Error> result = courier.finishAssignment(order.getId());
         assertThat(result.isSuccess()).isTrue();
         assertThat(courier.getAssignments()).isEmpty();
     }
@@ -114,10 +113,16 @@ class CourierTest {
         Order order = Order.create(UUID.randomUUID(), Location.create(1, 1).getValue(), Volume.create(5).getValue())
                 .getValue();
         courier.takeOrder(order);
-        Assignment assignment = courier.getAssignments().get(0);
-        Result<Assignment, Error> result = courier.finishAssignment(assignment);
+        Result<Courier, Error> result = courier.finishAssignment(order.getId());
         assertThat(result.isFailure()).isTrue();
         assertThat(courier.getAssignments()).hasSize(1);
+    }
+
+    @Test
+    void finishAssignment_shouldFail_whenAssignmentNotFound() {
+        Courier courier = Courier.create(NAME, LOCATION).getValue();
+        Result<Courier, Error> result = courier.finishAssignment(UUID.randomUUID());
+        assertThat(result.isFailure()).isTrue();
     }
 
     // --- changeLocation ---
