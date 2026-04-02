@@ -14,7 +14,7 @@ public class DefaultDomainEventPublisher implements DomainEventPublisher {
         this.publisher = publisher;
     }
 
-    public void publish(Iterable<Aggregate<?>> aggregates) {
+    public void publish(Iterable<? extends Aggregate<?>> aggregates) {
         for (Aggregate<?> aggregate : aggregates) {
             for (DomainEvent event : aggregate.getDomainEvents()) {
                 publisher.publishEvent(event);

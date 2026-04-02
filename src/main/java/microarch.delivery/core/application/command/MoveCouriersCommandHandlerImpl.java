@@ -1,6 +1,7 @@
 package microarch.delivery.core.application.command;
 
 import jakarta.transaction.Transactional;
+import libs.ddd.DomainEventPublisher;
 import libs.errs.UnitResult;
 import libs.errs.Error;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,6 @@ import microarch.delivery.core.ports.CourierRepository;
 import microarch.delivery.core.ports.OrderRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,11 +21,12 @@ public class MoveCouriersCommandHandlerImpl implements MoveCouriersCommandHandle
     private final OrderRepository orderRepository;
     private final CourierRepository courierRepository;
     private final CompleteOrderDomainService completeOrderDomainService;
+    private final DomainEventPublisher domainEventPublisher;
 
     @Override
     @Transactional
     public UnitResult<Error> handle() {
-        List<Order> assignedOrders = orderRepository.findAllAssigned();
+        Iterable<Order> assignedOrders = orderRepository.findAllAssigned();
 
         for (Order order : assignedOrders) {
             var courierOpt = courierRepository.findById(order.getCourierId());
@@ -50,6 +50,8 @@ public class MoveCouriersCommandHandlerImpl implements MoveCouriersCommandHandle
             courierRepository.update(courier);
             orderRepository.update(order);
         }
+        domainEventPublisher.publish(assignedOrders);
+
         return UnitResult.success();
     }
 
