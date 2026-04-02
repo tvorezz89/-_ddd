@@ -79,19 +79,21 @@ public class Courier extends Aggregate<UUID> {
 
     }
 
-    public UnitResult<Error> completeAssignment(Assignment assignment) {
-        Objects.requireNonNull(assignment);
-        Optional<Assignment> courierAssignment = assignments.stream().filter(a -> a.equals(assignment)).findFirst();
+    public UnitResult<Error> completeAssignment(UUID assignmentId) {
+        Objects.requireNonNull(assignmentId);
+        Optional<Assignment> courierAssignment = assignments.stream()
+                .filter(a -> a.getId().equals(assignmentId))
+                .findFirst();
         if (courierAssignment.isEmpty()) {
             return UnitResult.failure(
-                    Errors.assignmentNotTakenByCourier(assignment)
+                    Errors.assignmentNotTakenByCourier(assignmentId)
             );
         }
-        Result<Void, Error> result = assignment.completeOrderByCourierLocation(location);
+        Result<Void, Error> result = courierAssignment.get().completeOrderByCourierLocation(location);
         if (result.isFailure()) {
             return UnitResult.failure(result.getError());
         }
-        assignments.remove(assignment);
+        assignments.remove(courierAssignment.get());
         return UnitResult.success();
     }
 
@@ -115,10 +117,10 @@ public class Courier extends Aggregate<UUID> {
             );
         }
 
-        public static Error assignmentNotTakenByCourier(Assignment assignment) {
+        public static Error assignmentNotTakenByCourier(UUID assignmentId) {
             return Error.of(
                     "assignmentNotTakenByCourier",
-                    "Assignment does not belong to this courier: " + assignment
+                    "Assignment does not belong to this courier: " + assignmentId
             );
         }
 

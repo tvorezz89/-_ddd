@@ -247,7 +247,7 @@ class CourierTest {
             courier.takeOrder(order);
             var assignment = courier.getAssignments().getFirst();
 
-            var result = courier.completeAssignment(assignment);
+            var result = courier.completeAssignment(assignment.getId());
 
             assertThat(result.isSuccess()).isTrue();
         }
@@ -261,7 +261,7 @@ class CourierTest {
             courier.takeOrder(order);
             var assignment = courier.getAssignments().getFirst();
 
-            courier.completeAssignment(assignment);
+            courier.completeAssignment(assignment.getId());
 
             assertThat(courier.getAssignments()).isEmpty();
         }
@@ -274,7 +274,7 @@ class CourierTest {
             courier.takeOrder(order);
             var assignment = courier.getAssignments().getFirst();
 
-            var result = courier.completeAssignment(assignment);
+            var result = courier.completeAssignment(assignment.getId());
 
             assertThat(result.isSuccess()).isTrue();
         }
@@ -290,7 +290,7 @@ class CourierTest {
             courier.takeOrder(order2);
             var firstAssignment = courier.getAssignments().getFirst();
 
-            courier.completeAssignment(firstAssignment);
+            courier.completeAssignment(firstAssignment.getId());
 
             assertThat(courier.getAssignments()).hasSize(1);
         }
@@ -306,7 +306,7 @@ class CourierTest {
             var courier = Courier.mustCreate(NAME, LOCATION);
             var foreignAssignment = Assignment.mustCreate(UUID.randomUUID(), Volume.mustCreate(5), LOCATION);
 
-            var result = courier.completeAssignment(foreignAssignment);
+            var result = courier.completeAssignment(foreignAssignment.getId());
 
             assertThat(result.isSuccess()).isFalse();
             assertThat(result.getError().getCode()).isEqualTo("assignmentNotTakenByCourier");
@@ -320,7 +320,7 @@ class CourierTest {
             courier.takeOrder(order);
             var assignment = courier.getAssignments().getFirst();
 
-            var result = courier.completeAssignment(assignment);
+            var result = courier.completeAssignment(assignment.getId());
 
             assertThat(result.isSuccess()).isFalse();
         }
@@ -333,7 +333,7 @@ class CourierTest {
             courier.takeOrder(order);
             var assignment = courier.getAssignments().getFirst();
 
-            courier.completeAssignment(assignment);
+            courier.completeAssignment(assignment.getId());
 
             assertThat(courier.getAssignments()).hasSize(1);
         }
@@ -470,7 +470,7 @@ class CourierTest {
             assertThat(courier.getAssignments()).hasSize(2);
 
             var largeAssignment = courier.getAssignments().getFirst();
-            courier.completeAssignment(largeAssignment);
+            courier.completeAssignment(largeAssignment.getId());
 
             var newOrder = Order.mustCreate(UUID.randomUUID(), courierLocation, Volume.mustCreate(12));
             var result = courier.takeOrder(newOrder);
