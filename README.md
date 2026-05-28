@@ -28,19 +28,19 @@ DELETE FROM public.outbox;
 
 # Генерация HTTP сервера
 ```
-mvn clean compile
+./gradlew clean compile
 ```
 
 # Генерация gRPC клиента из Protobuf
 ```
-mvn clean compile
+./gradlew clean compile
 ```
 # Генерация интеграционных событий Kafka из Protobuf
 ```
-mvn clean compile
+./gradlew clean compile
 ```
 
 ## Лицензия
 
-Код распространяется под лицензией [MIT](./LICENSE).  
+Код распространяется под лицензией [MIT](./LICENSE).
 © 2025 microarch.ru
