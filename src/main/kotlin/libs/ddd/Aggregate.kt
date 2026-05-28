@@ -11,6 +11,8 @@ abstract class Aggregate<TId : Comparable<TId>> :
     @Transient
     protected var events: MutableList<DomainEvent> = mutableListOf()
 
+    override fun getId(): TId? = id
+
     override fun getDomainEvents(): List<DomainEvent> = events.toList()
 
     override fun clearDomainEvents() {

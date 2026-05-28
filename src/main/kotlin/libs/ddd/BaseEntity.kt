@@ -9,6 +9,7 @@ import java.util.Objects
 abstract class BaseEntity<TId : Comparable<TId>> : Comparable<BaseEntity<TId>> {
 
     @Id
+    @JvmField
     @Column(name = "id")
     protected var id: TId? = null
 

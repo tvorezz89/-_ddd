@@ -27,6 +27,7 @@ kotlin {
         main {
             kotlin.srcDir("src/main/kotlin")
             kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin").get().asFile)
+            kotlin.srcDir(layout.buildDirectory.dir("generated/source/proto/main/kotlin").get().asFile)
         }
     }
 }
@@ -42,6 +43,8 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
 
     implementation("org.postgresql:postgresql")
+
+    implementation("io.arrow-kt:arrow-core")
 
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

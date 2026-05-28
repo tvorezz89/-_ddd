@@ -4,6 +4,7 @@ import java.util.Objects
 import java.util.function.Consumer
 import java.util.function.Function
 
+@Deprecated("User Ether instead")
 class Result<T, E : Error>(private val value: T?, private val error: E?, private val isSuccess: Boolean) {
 
     companion object {
