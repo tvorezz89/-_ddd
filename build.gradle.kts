@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm") version "2.1.0"
     kotlin("plugin.spring") version "2.1.0"
     kotlin("plugin.jpa") version "2.1.0"
+    id("jacoco")
     id("com.google.protobuf") version "0.9.4"
     id("org.openapi.generator") version "7.22.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -44,7 +45,7 @@ dependencies {
 
     implementation("org.postgresql:postgresql")
 
-    implementation("io.arrow-kt:arrow-core")
+    implementation("io.arrow-kt:arrow-core:2.2.2")
 
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -71,6 +72,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("io.mockk:mockk:1.14.9")
     testImplementation("org.testcontainers:postgresql:1.21.3")
     testImplementation("org.testcontainers:junit-jupiter:1.21.3")
     testImplementation("org.reflections:reflections:0.10.2")
@@ -144,6 +146,20 @@ tasks.bootJar {
 
 tasks.bootRun {
     jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    finalizedBy(tasks.getByName("jacocoTestReport"))
+}
+
+tasks.withType<JacocoReport> {
+    dependsOn(project.gradle.taskGraph.allTasks.filterIsInstance<Test>())
+
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco.xml"))
+    }
 }
 
 ktlint {
