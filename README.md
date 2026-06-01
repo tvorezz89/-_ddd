@@ -44,3 +44,45 @@ mvn clean compile
 
 Код распространяется под лицензией [MIT](./LICENSE).  
 © 2025 microarch.ru
+
+# Delivery Service TypeScript
+
+TypeScript/NestJS analogue of the Java Spring Boot delivery service.
+
+The original repository currently contains the service shell, application configuration, DDD primitives, result/error helpers, and protobuf contracts. This project ports those parts to TypeScript while keeping the same environment-driven defaults.
+
+## Scripts
+
+```bash
+npm install
+npm run typecheck
+npm run build
+npm test
+npm run start:dev
+```
+
+## Environment
+
+| Variable | Default |
+| --- | --- |
+| `HTTP_PORT` | `8082` |
+| `DB_HOST` | `localhost` |
+| `DB_PORT` | `5432` |
+| `DB_NAME` | `delivery` |
+| `DB_USER` | `username` |
+| `DB_PASSWORD` | `secret` |
+| `DB_SSLMODE` | `disable` |
+| `KAFKA_HOST` | `localhost:9092` |
+| `KAFKA_CONSUMER_GROUP` | `delivery-group` |
+| `KAFKA_BASKET_EVENTS_TOPIC` | `basket.events` |
+| `KAFKA_ORDER_EVENTS_TOPIC` | `order.events` |
+| `GEO_SERVICE_GRPC_HOST` | `0.0.0.0` |
+| `GEO_SERVICE_GRPC_PORT` | `5004` |
+
+## Endpoints
+
+```http
+GET /health
+```
+
+Returns service name and status.
