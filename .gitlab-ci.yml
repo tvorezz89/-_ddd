@@ -1,0 +1,13 @@
+stages:
+  - build
+
+build:
+  image: eclipse-temurin:21-jdk
+  stage: build
+  script:
+    - ./gradlew build
+  artifacts:
+    expire_in: "7 days"
+    reports:
+      junit:
+        - ./**/build/test-results/**/TEST-*.xml
