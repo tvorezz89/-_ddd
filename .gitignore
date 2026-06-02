@@ -3,3 +3,5 @@ dist/
 coverage/
 .env
 *.log
+src/microarch-delivery/adapters/README
+Конспект.md
