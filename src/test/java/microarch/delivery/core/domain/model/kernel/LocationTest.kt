@@ -1,7 +1,7 @@
 package microarch.delivery.core.domain.model.kernel
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -18,7 +18,7 @@ class LocationTest {
 
         // assert
         assertTrue(result.isLeft())
-        assertEquals(result.leftOrNull()?.code, "value.is.out.of.range")
+        assertEquals("value.is.out.of.range", result.leftOrNull()?.code)
     }
 
     @Test
@@ -27,11 +27,8 @@ class LocationTest {
         val first = Location.of(x = 5, y = 3).getOrNull()!!
         val second = Location.of(x = 5, y = 3).getOrNull()!!
 
-        // act
-        val result = first.equals(second)
-
-        // assert
-        assertTrue(result)
+        // act && assert
+        assertEquals(first, second)
     }
 
     @Test
@@ -40,11 +37,8 @@ class LocationTest {
         val first = Location.of(x = 5, y = 3).getOrNull()!!
         val second = Location.of(x = 5, y = 2).getOrNull()!!
 
-        // act
-        val result = first.equals(second)
-
-        // assert
-        assertFalse(result)
+        // act && assert
+        assertNotEquals(first, second)
     }
 
     @Test
