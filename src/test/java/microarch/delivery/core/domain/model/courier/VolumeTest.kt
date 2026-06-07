@@ -57,6 +57,86 @@ class VolumeTest {
         assertEquals(expected, result.getOrNull()?.value)
     }
 
+    @Test
+    fun `when create should round`() {
+        // arrange
+        val expected = BigDecimal("0.2")
+
+        // act
+        val result = Volume.of(BigDecimal("0.15"))
+
+        // assert
+        assertTrue(result.isRight())
+        assertNotNull(result.getOrNull())
+        assertEquals(expected, result.getOrNull()?.value)
+    }
+
+    @Test
+    fun `should plus correctly`() {
+        // arrange
+        val first = Volume.of(BigDecimal("2.5")).getOrNull()!!
+        val second = Volume.of(BigDecimal("0.6")).getOrNull()!!
+        val expected = Volume.of(BigDecimal("3.1")).getOrNull()!!
+
+        // act
+        val result = first + second
+
+        // assert
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `when first volume less than second should compare correctly`() {
+        // arrange
+        val first = Volume.of(BigDecimal("0.2")).getOrNull()!!
+        val second = Volume.of(BigDecimal("0.3")).getOrNull()!!
+
+        // act
+        val result = first < second
+
+        // assert
+        assertTrue(result)
+    }
+
+    @Test
+    fun `when first volume less or equals than second should compare correctly`() {
+        // arrange
+        val first = Volume.of(BigDecimal("0.2")).getOrNull()!!
+        val second = Volume.of(BigDecimal("0.2")).getOrNull()!!
+
+        // act
+        val result = first <= second
+
+        // assert
+        assertTrue(result)
+    }
+
+    @Test
+    fun `when first volume more than second should compare correctly`() {
+        // arrange
+        val first = Volume.of(BigDecimal("0.3")).getOrNull()!!
+        val second = Volume.of(BigDecimal("0.2")).getOrNull()!!
+
+        // act
+        val result = first > second
+
+        // assert
+        assertTrue(result)
+    }
+
+    @Test
+    fun `when first volume more or equals than second should compare correctly`() {
+        // arrange
+        val first = Volume.of(BigDecimal("0.2")).getOrNull()!!
+        val second = Volume.of(BigDecimal("0.2")).getOrNull()!!
+
+        // act
+        val result = first >= second
+
+        // assert
+        assertTrue(result)
+    }
+
     companion object {
         @JvmStatic
         fun invalidValues(): List<Arguments> = listOf(
