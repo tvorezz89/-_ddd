@@ -4,8 +4,8 @@ import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.Transient
 
 @MappedSuperclass
-abstract class Aggregate<TId : Comparable<TId>> :
-    BaseEntity<TId>(),
+abstract class Aggregate<TId : Comparable<TId>>(id: TId) :
+    BaseEntity<TId>(id = id),
     AggregateRoot<TId> {
 
     @Transient

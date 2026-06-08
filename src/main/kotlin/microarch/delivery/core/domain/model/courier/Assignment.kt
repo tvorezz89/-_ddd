@@ -15,12 +15,12 @@ class Assignment private constructor(val orderId: UUID, val volume: Volume, val 
     var status: Status = status
         private set
 
-    fun complete(location: Location): Either<Error, Assignment> {
+    fun complete(location: Location): Either<Error, Unit> {
         val distance = this.location.distance(location)
-        if (distance > MAX_DISTANCE) return currentLocationTooFarFromTarget().left()
+        if (distance > MAX_DISTANCE) return currentLocationTooFarFromTargetError().left()
 
         this.status = Status.COMPLETED
-        return this.right()
+        return Unit.right()
     }
 
     companion object {
@@ -31,7 +31,7 @@ class Assignment private constructor(val orderId: UUID, val volume: Volume, val 
             return assignment.right()
         }
 
-        private fun currentLocationTooFarFromTarget(): Error = Error.of(
+        private fun currentLocationTooFarFromTargetError(): Error = Error.of(
             "current.location.too.far.from.target",
             "The current location must be within one cell or less from the target."
         )

@@ -65,7 +65,7 @@ class AssignmentTest {
         // assert
         assertTrue(result.isRight())
         assertNotNull(result.getOrNull())
-        assertEquals(Status.COMPLETED, result.getOrNull()?.status)
+        assertEquals(Status.COMPLETED, assignment.status)
     }
 
     @Test
@@ -85,7 +85,7 @@ class AssignmentTest {
         // assert
         assertTrue(result.isRight())
         assertNotNull(result.getOrNull())
-        assertEquals(Status.COMPLETED, result.getOrNull()?.status)
+        assertEquals(Status.COMPLETED, assignment.status)
     }
 
     @Test
