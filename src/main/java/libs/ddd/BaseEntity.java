@@ -3,11 +3,9 @@ package libs.ddd;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
 
 import java.util.Objects;
 
-@Getter
 @MappedSuperclass
 public abstract class BaseEntity<TId extends Comparable<TId>> implements Comparable<BaseEntity<TId>> {
     @Id
@@ -19,6 +17,10 @@ public abstract class BaseEntity<TId extends Comparable<TId>> implements Compara
 
     protected BaseEntity(TId id) {
         this.id = id;
+    }
+
+    public TId getId() {
+        return id;
     }
 
     protected boolean isTransient() {
