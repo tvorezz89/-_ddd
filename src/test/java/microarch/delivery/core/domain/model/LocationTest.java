@@ -73,12 +73,21 @@ class LocationTest {
     @ParameterizedTest
     @CsvSource({ "1, 1, 3, 4, 5", "3, 4, 1, 1, 5", "5, 5, 5, 5, 0", "10, 1, 1, 10, 18" })
     void shouldCalculateDistanceToOtherLocation(int firstX, int firstY, int secondX, int secondY,
-                                                int expectedDistance) {
+            int expectedDistance) {
         var first = Location.mustCreate(firstX, firstY);
         var second = Location.mustCreate(secondX, secondY);
 
         var distance = first.distanceTo(second);
 
         assertThat(distance).isEqualTo(expectedDistance);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "5, 5, true", "5, 6, true", "6, 5, true", "5, 7, false", "7, 5, false", "6, 6, false" })
+    void shouldKnowWhenOtherLocationIsWithinOneCell(int otherX, int otherY, boolean expectedResult) {
+        var location = Location.mustCreate(5, 5);
+        var other = Location.mustCreate(otherX, otherY);
+
+        assertThat(location.isWithinOneCellFrom(other)).isEqualTo(expectedResult);
     }
 }

@@ -23,8 +23,7 @@ public final class Location extends ValueObject<Location> {
     private final int y;
 
     public static Result<Location, Error> create(int x, int y) {
-        var err = Guard.combine(
-                Guard.againstOutOfRange(x, MIN_COORDINATE, MAX_COORDINATE, "x"),
+        var err = Guard.combine(Guard.againstOutOfRange(x, MIN_COORDINATE, MAX_COORDINATE, "x"),
                 Guard.againstOutOfRange(y, MIN_COORDINATE, MAX_COORDINATE, "y"));
         if (err != null) {
             return Result.failure(err);
@@ -39,6 +38,10 @@ public final class Location extends ValueObject<Location> {
 
     public int distanceTo(Location other) {
         return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
+    }
+
+    public boolean isWithinOneCellFrom(Location other) {
+        return this.distanceTo(other) <= 1;
     }
 
     @Override
