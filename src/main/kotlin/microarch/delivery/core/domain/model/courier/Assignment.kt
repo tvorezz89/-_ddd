@@ -9,23 +9,23 @@ import libs.errs.GeneralErrors
 import microarch.delivery.core.domain.model.kernel.Location
 import java.util.UUID
 
-class Assignment private constructor(val orderId: UUID, val volume: Volume, val location: Location, status: Status) :
+class Assignment private constructor(val orderId: UUID, val volume: Volume, val location: Location, status: AssignmentStatus) :
     BaseEntity<UUID>(id = UUID.randomUUID()) {
 
-    var status: Status = status
+    var status: AssignmentStatus = status
         private set
 
     fun complete(location: Location): Either<Error, Unit> {
         val distance = this.location.distance(location)
         if (distance > MAX_DISTANCE) return currentLocationTooFarFromTargetError().left()
 
-        this.status = Status.COMPLETED
+        this.status = AssignmentStatus.COMPLETED
         return Unit.right()
     }
 
     companion object {
-        fun of(orderId: UUID, volume: Volume, location: Location, status: Status): Either<Error, Assignment> {
-            if (status != Status.ASSIGNED) return GeneralErrors.valueIsInvalid("status", status).left()
+        fun of(orderId: UUID, volume: Volume, location: Location, status: AssignmentStatus): Either<Error, Assignment> {
+            if (status != AssignmentStatus.ASSIGNED) return GeneralErrors.valueIsInvalid("status", status).left()
 
             val assignment = Assignment(orderId = orderId, volume = volume, location = location, status = status)
             return assignment.right()
@@ -40,7 +40,7 @@ class Assignment private constructor(val orderId: UUID, val volume: Volume, val 
     }
 }
 
-enum class Status {
+enum class AssignmentStatus {
     ASSIGNED,
     COMPLETED
 }

@@ -84,16 +84,10 @@ class CourierTest {
             name = "some name",
             location = Location.of(1, 1).getOrNull()!!
         ).getOrNull()!!
-
-        val assigment = Assignment.of(
-            orderId = UUID.randomUUID(),
-            volume = Volume.of(BigDecimal.ONE).getOrNull()!!,
-            location = Location.of(2, 2).getOrNull()!!,
-            status = Status.ASSIGNED
-        ).getOrNull()!!
+        val assigmentId = UUID.randomUUID()
 
         // act
-        val result = courier.completeAssignment(assigment)
+        val result = courier.completeAssignment(assigmentId)
 
         // assert
         assertTrue(result.isLeft())
@@ -108,17 +102,14 @@ class CourierTest {
             location = Location.of(1, 1).getOrNull()!!
         ).getOrNull()!!
 
-        val assigment = Assignment.of(
+        val assignment = courier.assign(
             orderId = UUID.randomUUID(),
             volume = Volume.of(BigDecimal.ONE).getOrNull()!!,
-            location = Location.of(2, 2).getOrNull()!!,
-            status = Status.ASSIGNED
+            location = Location.of(2, 2).getOrNull()!!
         ).getOrNull()!!
 
-        courier.assign(assigment)
-
         // act
-        val result = courier.completeAssignment(assigment)
+        val result = courier.completeAssignment(assignment.getId()!!)
 
         // assert
         assertTrue(result.isLeft())
@@ -133,107 +124,55 @@ class CourierTest {
             location = Location.of(1, 1).getOrNull()!!
         ).getOrNull()!!
 
-        val assigment = Assignment.of(
+        val assignment = courier.assign(
             orderId = UUID.randomUUID(),
             volume = Volume.of(BigDecimal.ONE).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
+            location = Location.of(2, 1).getOrNull()!!
         ).getOrNull()!!
 
-        courier.assign(assigment)
-
         // act
-        val result = courier.completeAssignment(assigment)
+        val result = courier.completeAssignment(assignment.getId()!!)
 
         // assert
         assertTrue(result.isRight())
-        assertFalse(courier.assignments.contains(assigment))
-        assertEquals(Status.COMPLETED, assigment.status)
+        assertFalse(courier.assignments.contains(assignment))
+        assertEquals(AssignmentStatus.COMPLETED, assignment.status)
     }
 
     @Test
-    fun `when current assignments is empty and volume less than 20 should assign`() {
+    fun `should assign`() {
         // arrange
         val courier = Courier.of(
             name = "some name",
             location = Location.of(1, 1).getOrNull()!!
         ).getOrNull()!!
 
-        val assigment = Assignment.of(
+        // act
+        val result = courier.assign(
             orderId = UUID.randomUUID(),
             volume = Volume.of(BigDecimal.ONE).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
-        ).getOrNull()!!
-
-        // act
-        val result = courier.assign(assigment)
+            location = Location.of(2, 2).getOrNull()!!
+        )
 
         // assert
         assertTrue(result.isRight())
-        assertTrue(courier.assignments.contains(assigment))
+        assertTrue(courier.assignments.contains(result.getOrNull()!!))
     }
 
     @Test
-    fun `when current assignments is not empty and sum volume less than 20 should assign`() {
+    fun `has enough volume when current assignments is empty and volume less than 20 should return true`() {
         // arrange
         val courier = Courier.of(
             name = "some name",
             location = Location.of(1, 1).getOrNull()!!
         ).getOrNull()!!
-
-        val assigment1 = Assignment.of(
-            orderId = UUID.randomUUID(),
-            volume = Volume.of(BigDecimal("1.0")).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
-        ).getOrNull()!!
-        val assigment2 = Assignment.of(
-            orderId = UUID.randomUUID(),
-            volume = Volume.of(BigDecimal("18.5")).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
-        ).getOrNull()!!
-
-        courier.assign(assigment1)
+        val volume = Volume.of(BigDecimal.ONE).getOrNull()!!
 
         // act
-        val result = courier.assign(assigment2)
+        val result = courier.hasEnoughVolume(volume)
 
         // assert
-        assertTrue(result.isRight())
-        assertTrue(courier.assignments.contains(assigment2))
-    }
-
-    @Test
-    fun `when current assignments is not empty and sum volume is equals 20 should assign`() {
-        // arrange
-        val courier = Courier.of(
-            name = "some name",
-            location = Location.of(1, 1).getOrNull()!!
-        ).getOrNull()!!
-
-        val assigment1 = Assignment.of(
-            orderId = UUID.randomUUID(),
-            volume = Volume.of(BigDecimal("2.0")).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
-        ).getOrNull()!!
-        val assigment2 = Assignment.of(
-            orderId = UUID.randomUUID(),
-            volume = Volume.of(BigDecimal("18.0")).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
-        ).getOrNull()!!
-
-        courier.assign(assigment1)
-
-        // act
-        val result = courier.assign(assigment2)
-
-        // assert
-        assertTrue(result.isRight())
-        assertTrue(courier.assignments.contains(assigment2))
+        assertTrue(result)
     }
 
     @Test
@@ -244,27 +183,91 @@ class CourierTest {
             location = Location.of(1, 1).getOrNull()!!
         ).getOrNull()!!
 
-        val assigment1 = Assignment.of(
+        courier.assign(
             orderId = UUID.randomUUID(),
             volume = Volume.of(BigDecimal("2.1")).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
-        ).getOrNull()!!
-        val assigment2 = Assignment.of(
-            orderId = UUID.randomUUID(),
-            volume = Volume.of(BigDecimal("18.0")).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
-        ).getOrNull()!!
-
-        courier.assign(assigment1)
+            location = Location.of(2, 1).getOrNull()!!
+        )
 
         // act
-        val result = courier.assign(assigment2)
+        val result = courier.assign(
+            orderId = UUID.randomUUID(),
+            volume = Volume.of(BigDecimal("18.0")).getOrNull()!!,
+            location = Location.of(2, 1).getOrNull()!!
+        )
 
         // assert
         assertTrue(result.isLeft())
         assertEquals("volume.limit.exceeded", result.leftOrNull()?.code)
+    }
+
+    @Test
+    fun `has enough volume when current assignments is not empty and sum volume less than 20 should assign`() {
+        // arrange
+        val courier = Courier.of(
+            name = "some name",
+            location = Location.of(1, 1).getOrNull()!!
+        ).getOrNull()!!
+
+        courier.assign(
+            orderId = UUID.randomUUID(),
+            volume = Volume.of(BigDecimal.ONE).getOrNull()!!,
+            location = Location.of(2, 1).getOrNull()!!
+        )
+
+        val volume = Volume.of(BigDecimal("18.5")).getOrNull()!!
+
+        // act
+        val result = courier.hasEnoughVolume(volume)
+
+        // assert
+        assertTrue(result)
+    }
+
+    @Test
+    fun `has enough volume when current assignments is not empty and sum volume is equals 20 should assign`() {
+        // arrange
+        val courier = Courier.of(
+            name = "some name",
+            location = Location.of(1, 1).getOrNull()!!
+        ).getOrNull()!!
+
+        courier.assign(
+            orderId = UUID.randomUUID(),
+            volume = Volume.of(BigDecimal.TWO).getOrNull()!!,
+            location = Location.of(2, 1).getOrNull()!!
+        )
+
+        val volume = Volume.of(BigDecimal("18.0")).getOrNull()!!
+
+        // act
+        val result = courier.hasEnoughVolume(volume)
+
+        // assert
+        assertTrue(result)
+    }
+
+    @Test
+    fun `has enough volume when current assignments is not empty and sum volume is more than 20 should return false`() {
+        // arrange
+        val courier = Courier.of(
+            name = "some name",
+            location = Location.of(1, 1).getOrNull()!!
+        ).getOrNull()!!
+
+        courier.assign(
+            orderId = UUID.randomUUID(),
+            volume = Volume.of(BigDecimal("2.1")).getOrNull()!!,
+            location = Location.of(2, 1).getOrNull()!!
+        )
+
+        val volume = Volume.of(BigDecimal("18.0")).getOrNull()!!
+
+        // act
+        val result = courier.hasEnoughVolume(volume)
+
+        // assert
+        assertFalse(result)
     }
 
     @Test
@@ -275,17 +278,19 @@ class CourierTest {
             location = Location.of(1, 1).getOrNull()!!
         ).getOrNull()!!
 
-        val assigment = Assignment.of(
-            orderId = UUID.randomUUID(),
+        val orderId = UUID.randomUUID()
+        val assigment = courier.assign(
+            orderId = orderId,
             volume = Volume.of(BigDecimal("2.1")).getOrNull()!!,
-            location = Location.of(2, 1).getOrNull()!!,
-            status = Status.ASSIGNED
+            location = Location.of(2, 1).getOrNull()!!
         ).getOrNull()!!
 
-        courier.assign(assigment)
-
         // act
-        val result = courier.assign(assigment)
+        val result = courier.assign(
+            orderId = orderId,
+            volume = Volume.of(BigDecimal("2.1")).getOrNull()!!,
+            location = Location.of(2, 1).getOrNull()!!
+        )
 
         // assert
         assertTrue(result.isLeft())

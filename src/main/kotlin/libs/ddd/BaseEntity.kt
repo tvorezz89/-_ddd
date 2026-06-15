@@ -13,6 +13,8 @@ abstract class BaseEntity<TId : Comparable<TId>> : Comparable<BaseEntity<TId>> {
     @Column(name = "id")
     protected var id: TId? = null
 
+    open fun getId(): TId? = id
+
     constructor()
 
     constructor(id: TId) {
