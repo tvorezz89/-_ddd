@@ -73,5 +73,9 @@ public final class Order extends Aggregate<UUID> {
         public static Error orderMustBeAssigned() {
             return Error.of("order.must.be.assigned", "Order must be in Assigned status");
         }
+
+        public static Error dispatchingFailed() {
+            return Error.of("order.dispatching.failed", "Order dispatching failed");
+        }
     }
 }
