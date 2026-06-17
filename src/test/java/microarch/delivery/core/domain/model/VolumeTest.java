@@ -33,6 +33,25 @@ class VolumeTest {
     }
 
     @Test
+    void shouldAddVolumes() {
+        var result = Volume.mustCreate(7).add(Volume.mustCreate(5));
+
+        assertThat(result).isEqualTo(Volume.mustCreate(12));
+    }
+
+    @Test
+    void shouldCompareVolumes() {
+        assertThat(Volume.mustCreate(7).isLessThanOrEqualTo(Volume.mustCreate(7))).isTrue();
+        assertThat(Volume.mustCreate(7).isLessThanOrEqualTo(Volume.mustCreate(8))).isTrue();
+        assertThat(Volume.mustCreate(8).isLessThanOrEqualTo(Volume.mustCreate(7))).isFalse();
+    }
+
+    @Test
+    void shouldCreateZeroVolumeForCalculations() {
+        assertThat(Volume.zero().add(Volume.mustCreate(5))).isEqualTo(Volume.mustCreate(5));
+    }
+
+    @Test
     void shouldBeImmutable() throws NoSuchFieldException {
         var valueField = Volume.class.getDeclaredField("value");
 

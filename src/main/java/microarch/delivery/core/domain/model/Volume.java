@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
@@ -30,6 +31,22 @@ public final class Volume extends ValueObject<Volume> {
 
     public static Volume mustCreate(int value) {
         return create(value).getValueOrThrow();
+    }
+
+    public static Volume zero() {
+        return new Volume(0);
+    }
+
+    public Volume add(Volume other) {
+        Objects.requireNonNull(other, "other");
+
+        return new Volume(this.value + other.value);
+    }
+
+    public boolean isLessThanOrEqualTo(Volume other) {
+        Objects.requireNonNull(other, "other");
+
+        return this.value <= other.value;
     }
 
     @Override
