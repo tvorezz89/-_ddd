@@ -56,8 +56,6 @@ mvnw.cmd
 .gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
-gradlew
-gradlew.bat
 
 # === Logs ===
 *.log
@@ -107,7 +105,6 @@ docker-compose.dev.yml
 *.sublime-project
 
 # === Базы данных ===
-*.sql
 *.sqlite
 *.db
 
