@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
 
 plugins {
-    id("org.springframework.boot") version "3.5.5"
+    id("org.springframework.boot") version "3.5.14"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm") version "2.1.0"
     kotlin("plugin.spring") version "2.1.0"
@@ -43,6 +43,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.kafka:spring-kafka")
 
+    implementation("org.liquibase:liquibase-core:5.0.1")
     implementation("org.postgresql:postgresql")
 
     implementation("io.arrow-kt:arrow-core:2.2.2")
@@ -56,8 +57,8 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
     implementation("jakarta.validation:jakarta.validation-api:3.0.2")
 
-    implementation("ch.qos.logback:logback-classic:1.5.13")
-    implementation("org.slf4j:slf4j-api:2.0.13")
+    implementation("ch.qos.logback:logback-classic")
+    implementation("org.slf4j:slf4j-api")
 
     implementation("io.grpc:grpc-netty-shaded:1.57.2")
     implementation("io.grpc:grpc-protobuf:1.57.2")
@@ -70,6 +71,7 @@ dependencies {
     compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("io.mockk:mockk:1.14.9")
@@ -170,4 +172,64 @@ ktlint {
     filter {
         exclude { element -> element.file.path.contains("generated/") }
     }
+}
+
+val dbUrl = "jdbc:postgresql://localhost:5432/delivery"
+val dbUsername = "postgres"
+val dbPassword = "postgres"
+val liquibaseChangelogFile = "src/main/resources/db/changelog/db.changelog-master.yaml"
+
+tasks.register<JavaExec>("update") {
+    group = "liquibase"
+    description = "Apply database changes"
+
+    mainClass.set("liquibase.integration.commandline.Main")
+    classpath = sourceSets.main.get().runtimeClasspath
+    workingDir = project.projectDir
+
+    args = listOf(
+        "--url=$dbUrl",
+        "--username=$dbUsername",
+        "--password=$dbPassword",
+        "--changelogFile=$liquibaseChangelogFile",
+        "--contexts=dev",
+        "update"
+    )
+}
+
+tasks.register<JavaExec>("rollback") {
+    group = "liquibase"
+    description = "Rollback last changeset"
+
+    mainClass.set("liquibase.integration.commandline.Main")
+    classpath = sourceSets.main.get().runtimeClasspath
+    workingDir = project.projectDir
+
+    args = listOf(
+        "--url=$dbUrl",
+        "--username=$dbUsername",
+        "--password=$dbPassword",
+        "--changelogFile=$liquibaseChangelogFile",
+        "--contexts=dev",
+        "rollbackCount",
+        "1"
+    )
+}
+
+tasks.register<JavaExec>("status") {
+    group = "liquibase"
+    description = "Show pending changesets"
+
+    mainClass.set("liquibase.integration.commandline.Main")
+    classpath = sourceSets.main.get().runtimeClasspath
+    workingDir = project.projectDir
+
+    args = listOf(
+        "--url=$dbUrl",
+        "--username=$dbUsername",
+        "--password=$dbPassword",
+        "--changelogFile=$liquibaseChangelogFile",
+        "--contexts=dev",
+        "status"
+    )
 }

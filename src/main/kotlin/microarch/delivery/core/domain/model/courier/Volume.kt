@@ -3,13 +3,16 @@ package microarch.delivery.core.domain.model.courier
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import jakarta.persistence.Column
+import jakarta.persistence.Embeddable
 import libs.ddd.ValueObject
 import libs.errs.Error
 import libs.errs.GeneralErrors
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class Volume private constructor(val litres: BigDecimal) : ValueObject<Volume>() {
+@Embeddable
+class Volume private constructor(@Column("volume") val litres: BigDecimal) : ValueObject<Volume>() {
 
     override fun equalityComponents(): Iterable<Any> = listOf(this.litres)
 

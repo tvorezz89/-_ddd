@@ -3,15 +3,34 @@ package microarch.delivery.core.domain.model.courier
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Table
 import libs.ddd.BaseEntity
 import libs.errs.Error
 import libs.errs.GeneralErrors
 import microarch.delivery.core.domain.model.kernel.Location
 import java.util.UUID
 
-class Assignment private constructor(val orderId: UUID, val volume: Volume, val location: Location, status: AssignmentStatus) :
+@Entity
+@Table(name = "assignment")
+class Assignment private constructor(orderId: UUID, volume: Volume, location: Location, status: AssignmentStatus) :
     BaseEntity<UUID>(id = UUID.randomUUID()) {
 
+    @Column(name = "order_id")
+    val orderId: UUID = orderId
+
+    @Embedded
+    val volume: Volume = volume
+
+    @Embedded
+    val location: Location = location
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     var status: AssignmentStatus = status
         private set
 

@@ -3,12 +3,16 @@ package microarch.delivery.core.domain.model.kernel
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import jakarta.persistence.Column
+import jakarta.persistence.Embeddable
 import libs.ddd.ValueObject
 import libs.errs.Error
 import libs.errs.GeneralErrors
 import kotlin.math.abs
 
-class Location private constructor(val x: Int, val y: Int) : ValueObject<Location>() {
+@Embeddable
+class Location private constructor(@Column(name = "location_x") val x: Int, @Column(name = "location_y") val y: Int) :
+    ValueObject<Location>() {
 
     override fun equalityComponents(): Iterable<Any> = listOf(this.x, this.y)
 

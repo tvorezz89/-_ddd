@@ -3,14 +3,30 @@ package microarch.delivery.core.domain.model.order
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Table
 import libs.ddd.Aggregate
 import libs.errs.Error
 import microarch.delivery.core.domain.model.courier.Volume
 import microarch.delivery.core.domain.model.kernel.Location
 import java.util.UUID
 
-class Order private constructor(id: UUID, val location: Location, val volume: Volume, status: Status) : Aggregate<UUID>(id = id) {
+@Entity
+@Table(name = "orders")
+class Order private constructor(id: UUID, location: Location, volume: Volume, status: Status) : Aggregate<UUID>(id = id) {
 
+    @Embedded
+    val location: Location = location
+
+    @Embedded
+    val volume: Volume = volume
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     var status: Status = status
         private set
 

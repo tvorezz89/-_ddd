@@ -4,6 +4,13 @@ stages:
 build:
   image: eclipse-temurin:21-jdk
   stage: build
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.configureondemand=true"
+  services:
+    - name: docker:24.0-dind
+      alias: docker
   script:
     - ./gradlew build
   artifacts:

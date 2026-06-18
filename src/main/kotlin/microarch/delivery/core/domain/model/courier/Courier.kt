@@ -5,6 +5,14 @@ import arrow.core.left
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.right
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import libs.ddd.Aggregate
 import libs.errs.Error
 import libs.errs.GeneralErrors
@@ -12,11 +20,23 @@ import microarch.delivery.core.domain.model.kernel.Location
 import java.math.BigDecimal
 import java.util.UUID
 
-class Courier private constructor(val name: String, location: Location, val maxVolume: Volume) : Aggregate<UUID>(id = UUID.randomUUID()) {
+@Entity
+@Table(name = "courier")
+class Courier private constructor(name: String, location: Location, val maxVolume: Volume) : Aggregate<UUID>(id = UUID.randomUUID()) {
 
+    @Column(name = "name")
+    val name: String = name
+
+    @Embedded
     var location: Location = location
         private set
 
+    @OneToMany(
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true,
+        fetch = FetchType.EAGER
+    )
+    @JoinColumn(name = "courier_id", nullable = false)
     var assignments: List<Assignment> = emptyList()
         private set
 
