@@ -16,7 +16,7 @@ class AssignmentTest {
         val orderId = UUID.randomUUID()
         val volume = Volume.of(BigDecimal.ONE).getOrNull()!!
         val location = Location.of(5, 5).getOrNull()!!
-        val status = Status.COMPLETED
+        val status = AssignmentStatus.COMPLETED
 
         // act
         val result = Assignment.of(orderId, volume, location, status)
@@ -32,7 +32,7 @@ class AssignmentTest {
         val orderId = UUID.randomUUID()
         val volume = Volume.of(BigDecimal.ONE).getOrNull()!!
         val location = Location.of(5, 5).getOrNull()!!
-        val status = Status.ASSIGNED
+        val status = AssignmentStatus.ASSIGNED
 
         // act
         val result = Assignment.of(orderId, volume, location, status)
@@ -55,7 +55,7 @@ class AssignmentTest {
             orderId = UUID.randomUUID(),
             volume = Volume.of(BigDecimal.ONE).getOrNull()!!,
             location = Location.of(5, 5).getOrNull()!!,
-            status = Status.ASSIGNED
+            status = AssignmentStatus.ASSIGNED
         ).getOrNull()!!
         val currentLocation = Location.of(5, 4).getOrNull()!!
 
@@ -65,7 +65,7 @@ class AssignmentTest {
         // assert
         assertTrue(result.isRight())
         assertNotNull(result.getOrNull())
-        assertEquals(Status.COMPLETED, assignment.status)
+        assertEquals(AssignmentStatus.COMPLETED, assignment.status)
     }
 
     @Test
@@ -75,7 +75,7 @@ class AssignmentTest {
             orderId = UUID.randomUUID(),
             volume = Volume.of(BigDecimal.ONE).getOrNull()!!,
             location = Location.of(5, 5).getOrNull()!!,
-            status = Status.ASSIGNED
+            status = AssignmentStatus.ASSIGNED
         ).getOrNull()!!
         val currentLocation = Location.of(5, 5).getOrNull()!!
 
@@ -85,7 +85,7 @@ class AssignmentTest {
         // assert
         assertTrue(result.isRight())
         assertNotNull(result.getOrNull())
-        assertEquals(Status.COMPLETED, assignment.status)
+        assertEquals(AssignmentStatus.COMPLETED, assignment.status)
     }
 
     @Test
@@ -95,7 +95,7 @@ class AssignmentTest {
             orderId = UUID.randomUUID(),
             volume = Volume.of(BigDecimal.ONE).getOrNull()!!,
             location = Location.of(5, 5).getOrNull()!!,
-            status = Status.ASSIGNED
+            status = AssignmentStatus.ASSIGNED
         ).getOrNull()!!
         val currentLocation = Location.of(4, 4).getOrNull()!!
 

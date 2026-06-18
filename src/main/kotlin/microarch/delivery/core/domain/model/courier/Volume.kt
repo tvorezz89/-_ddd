@@ -9,21 +9,21 @@ import libs.errs.GeneralErrors
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class Volume private constructor(val value: BigDecimal) : ValueObject<Volume>() {
+class Volume private constructor(val litres: BigDecimal) : ValueObject<Volume>() {
 
-    override fun equalityComponents(): Iterable<Any> = listOf(this.value)
+    override fun equalityComponents(): Iterable<Any> = listOf(this.litres)
 
-    operator fun plus(other: Volume): Volume = Volume(value + other.value)
+    operator fun plus(other: Volume): Volume = Volume(litres + other.litres)
 
-    override fun compareTo(other: Volume): Int = value.compareTo(other.value)
+    override fun compareTo(other: Volume): Int = litres.compareTo(other.litres)
 
     companion object {
-        fun of(value: BigDecimal): Either<Error, Volume> {
-            if (value.compareTo(BigDecimal.ZERO) != 1) {
-                return GeneralErrors.valueMustBeGreaterThan("value", value, BigDecimal.ZERO).left()
+        fun of(litres: BigDecimal): Either<Error, Volume> {
+            if (litres.compareTo(BigDecimal.ZERO) != 1) {
+                return GeneralErrors.valueMustBeGreaterThan("litres", litres, BigDecimal.ZERO).left()
             }
 
-            val volume = Volume(value.setScale(SCALE, RoundingMode.HALF_UP))
+            val volume = Volume(litres.setScale(SCALE, RoundingMode.HALF_UP))
             return volume.right()
         }
 

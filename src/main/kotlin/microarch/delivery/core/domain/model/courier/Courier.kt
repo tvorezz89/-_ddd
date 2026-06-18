@@ -2,6 +2,8 @@ package microarch.delivery.core.domain.model.courier
 
 import arrow.core.Either
 import arrow.core.left
+import arrow.core.raise.either
+import arrow.core.raise.ensure
 import arrow.core.right
 import libs.ddd.Aggregate
 import libs.errs.Error
@@ -18,32 +20,40 @@ class Courier private constructor(val name: String, location: Location, val maxV
     var assignments: List<Assignment> = emptyList()
         private set
 
-    fun move(location: Location): Either<Error, Unit> {
-        if (this.location == location) return anotherLocationRequiredError().left()
-        this.location = location
-        return Unit.right()
+    fun move(location: Location): Either<Error, Unit> = either {
+        ensure(this@Courier.location != location) { anotherLocationRequiredError() }
+        this@Courier.location = location
     }
 
-    fun completeAssignment(assignment: Assignment): Either<Error, Unit> {
-        if (!assignments.contains(assignment)) return notLetAssignedError().left()
+    fun completeAssignment(assignmentId: UUID): Either<Error, Unit> = either {
+        val assignment = this@Courier.assignments.firstOrNull { it.getId() == assignmentId }
+        ensure(assignment != null) { notLetAssignedError() }
 
-        val completeStatus = assignment.complete(location)
-        if (completeStatus.isLeft()) return currentLocationTooFarFromTargetError().left()
+        assignment.complete(location).bind()
 
-        this.assignments = assignments.filter { it != assignment }
-        return Unit.right()
+        this@Courier.assignments = assignments.filter { it != assignment }
     }
 
-    fun assign(assignment: Assignment): Either<Error, Unit> {
-        if (assignments.contains(assignment)) return alreadyAssignedError().left()
+    fun assign(orderId: UUID, volume: Volume, location: Location): Either<Error, Assignment> = either {
+        val assignedOrderIds = this@Courier.assignments.map { it.orderId }
+        ensure(!assignedOrderIds.contains(orderId)) { alreadyAssignedError() }
+        ensure(this@Courier.hasEnoughVolume(volume)) { volumeLimitExceededError() }
 
-        val totalAssignments = assignments + assignment
-        val totalVolume = totalAssignments.map { it.volume }.reduce { acc, volume -> acc + volume }
+        val assignment = Assignment.of(
+            orderId = orderId,
+            volume = volume,
+            location = location,
+            status = AssignmentStatus.ASSIGNED
+        ).bind()
 
-        if (totalVolume > this.maxVolume) return volumeLimitExceededError().left()
+        this@Courier.assignments += assignment
+        assignment
+    }
 
-        assignments = assignments + assignment
-        return Unit.right()
+    fun hasEnoughVolume(volume: Volume): Boolean {
+        val totalVolume = assignments.map { it.volume } + volume
+        val volumeSum = totalVolume.reduce { acc, volume -> acc + volume }
+        return volumeSum <= this.maxVolume
     }
 
     companion object {
@@ -71,11 +81,6 @@ class Courier private constructor(val name: String, location: Location, val maxV
         private fun alreadyAssignedError(): Error = Error.of(
             "already.assigned",
             "This assignment has been already assigned to this courier."
-        )
-
-        private fun currentLocationTooFarFromTargetError(): Error = Error.of(
-            "current.location.too.far.from.target",
-            "The current location must be within one cell or less from the target."
         )
 
         private fun volumeLimitExceededError(): Error = Error.of(

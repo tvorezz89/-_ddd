@@ -54,7 +54,7 @@ class VolumeTest {
         // assert
         assertTrue(result.isRight())
         assertNotNull(result.getOrNull())
-        assertEquals(expected, result.getOrNull()?.value)
+        assertEquals(expected, result.getOrNull()?.litres)
     }
 
     @Test
@@ -68,7 +68,7 @@ class VolumeTest {
         // assert
         assertTrue(result.isRight())
         assertNotNull(result.getOrNull())
-        assertEquals(expected, result.getOrNull()?.value)
+        assertEquals(expected, result.getOrNull()?.litres)
     }
 
     @Test
