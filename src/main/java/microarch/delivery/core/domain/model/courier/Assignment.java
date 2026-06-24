@@ -1,5 +1,13 @@
 package microarch.delivery.core.domain.model.courier;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import libs.ddd.BaseEntity;
 import libs.errs.Error;
 import libs.errs.Guard;
@@ -14,16 +22,26 @@ import microarch.delivery.core.domain.model.Volume;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@Table(name = "assignments")
 @Getter
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public final class Assignment extends BaseEntity<UUID> {
 
+    @Column(name = "order_id", nullable = false)
     private final UUID orderId;
 
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "volume", nullable = false))
     private final Volume volume;
 
+    @Embedded
+    @AttributeOverrides({ @AttributeOverride(name = "x", column = @Column(name = "location_x", nullable = false)),
+            @AttributeOverride(name = "y", column = @Column(name = "location_y", nullable = false)) })
     private final Location location;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private AssignmentStatus status;
 
     private Assignment(UUID id, UUID orderId, Volume volume, Location location, AssignmentStatus status) {
