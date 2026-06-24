@@ -79,6 +79,16 @@ public class Courier extends Aggregate<UUID> {
         location = newLocation;
     }
 
+    public int distanceTo(Location location) {
+        if (location == null) {
+            throw new DomainInvariantException(GeneralErrors.valueIsRequired("location"));
+        }
+
+        var xDistance = Math.abs(this.location.getX() - location.getX());
+        var yDistance = Math.abs(this.location.getY() - location.getY());
+        return xDistance + yDistance;
+    }
+
     private static void validate(UUID id, String name, Location location) {
         Error.throwIf(Guard.againstNullOrEmpty(id, "id"));
         Error.throwIf(Guard.againstNullOrEmpty(name, "name"));
