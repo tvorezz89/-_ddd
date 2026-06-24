@@ -21,8 +21,7 @@ public final class Location extends ValueObject<Location> {
     }
 
     public static Result<Location, libs.errs.Error> create(int x1, int y1) {
-        var error = Guard.combine(
-                Guard.againstOutOfRange(x1, minimumCoordinate, maximumCoordinate, "x"),
+        var error = Guard.combine(Guard.againstOutOfRange(x1, minimumCoordinate, maximumCoordinate, "x"),
                 Guard.againstOutOfRange(y1, minimumCoordinate, maximumCoordinate, "y"));
         if (error != null) {
             return Result.failure(error);
