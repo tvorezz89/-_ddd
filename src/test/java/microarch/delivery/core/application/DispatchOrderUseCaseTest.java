@@ -70,6 +70,11 @@ class DispatchOrderUseCaseTest {
         public List<Order> findAllAssigned() {
             return List.of();
         }
+
+        @Override
+        public List<Order> findAllNotCompleted() {
+            return List.of();
+        }
     }
 
     private static final class InMemoryCourierRepository implements CourierRepository {
