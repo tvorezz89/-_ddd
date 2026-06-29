@@ -1,13 +1,15 @@
 package microarch.delivery.core.application;
 
 import libs.errs.Error;
-import libs.errs.UnitResult;
+import libs.errs.Result;
 import lombok.RequiredArgsConstructor;
 import microarch.delivery.core.domain.model.Location;
 import microarch.delivery.core.domain.model.courier.Courier;
 import microarch.delivery.core.ports.CourierRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,13 +19,14 @@ public class CreateCourierCommandHandlerImpl implements CreateCourierCommandHand
 
     @Override
     @Transactional
-    public UnitResult<Error> handle(CreateCourierCommand command) {
+    public Result<UUID, Error> handle(CreateCourierCommand command) {
         var courierResult = Courier.create(command.getName(), Location.mustCreate(1, 1));
         if (courierResult.isFailure()) {
-            return UnitResult.failure(courierResult.getError());
+            return Result.failure(courierResult.getError());
         }
 
-        courierRepository.add(courierResult.getValue());
-        return UnitResult.success();
+        var courier = courierResult.getValue();
+        courierRepository.add(courier);
+        return Result.success(courier.getId());
     }
 }
