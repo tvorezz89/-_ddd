@@ -79,4 +79,12 @@ class CourierTest {
 
         assertEquals(Location.of(2, 3), courier.getLocation());
     }
+
+    @Test
+    void distanceToShouldReturnManhattanDistance() {
+        var courier = Courier.create("Ivan", Location.of(1, 1));
+        var distance = courier.distanceTo(Location.of(4, 5));
+
+        assertEquals(7, distance);
+    }
 }
