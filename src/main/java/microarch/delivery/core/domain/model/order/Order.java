@@ -30,6 +30,10 @@ public class Order extends Aggregate<UUID> {
         return new Order(id, location, volume, OrderStatus.CREATED);
     }
 
+    public static Order restore(UUID id, Location location, Volume volume, OrderStatus status) {
+        return new Order(id, location, volume, status);
+    }
+
     public void assign() {
         if (status != OrderStatus.CREATED) {
             throw new DomainInvariantException(GeneralErrors.valueIsInvalid("status", status));
@@ -55,8 +59,8 @@ public class Order extends Aggregate<UUID> {
             throw new DomainInvariantException(GeneralErrors.valueIsRequired("volume"));
         }
 
-        if (status != OrderStatus.CREATED) {
-            throw new DomainInvariantException(GeneralErrors.valueIsInvalid("status", status));
+        if (status == null) {
+            throw new DomainInvariantException(GeneralErrors.valueIsRequired("status"));
         }
     }
 }
