@@ -35,8 +35,7 @@ class DeliveryControllersTest {
         var handler = new RecordingCreateOrderHandler();
         var controller = new CreateOrderController(handler);
         var orderId = UUID.randomUUID();
-        var request = new NewOrder(orderId, new Address("Russia", "Moscow", "Tverskaya", "1", "2"));
-        request.setVolume(3);
+        var request = new NewOrder(orderId, new Address("Russia", "Moscow", "Tverskaya", "1", "2"), 3);
 
         var response = controller.createOrder(request);
 
