@@ -7,6 +7,7 @@ import microarch.delivery.core.domain.model.order.Order;
 import microarch.delivery.core.domain.model.order.OrderStatus;
 import microarch.delivery.core.domain.services.OrderDispatcherDomainServiceImpl;
 import microarch.delivery.core.ports.CourierRepository;
+import microarch.delivery.core.ports.GeoClient;
 import microarch.delivery.core.ports.OrderRepository;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,8 @@ class DeliveryUseCasesTest {
     @Test
     void createOrderShouldSaveNewOrder() {
         var orderRepository = new InMemoryOrderRepository();
-        var handler = new CreateOrderCommandHandlerImpl(orderRepository);
+        var geoClient = new StubGeoClient(Location.mustCreate(4, 5));
+        var handler = new CreateOrderCommandHandlerImpl(orderRepository, geoClient);
         var orderId = UUID.randomUUID();
 
         var command = CreateOrderCommand.create(orderId, "Russia", "Moscow", "Tverskaya", "1", "2", 3).getValue();
@@ -32,8 +34,10 @@ class DeliveryUseCasesTest {
         assertThat(orderRepository.added).hasSize(1);
         var order = orderRepository.added.getFirst();
         assertThat(order.getId()).isEqualTo(orderId);
+        assertThat(order.getLocation()).isEqualTo(Location.mustCreate(4, 5));
         assertThat(order.getVolume()).isEqualTo(Volume.mustCreate(3));
         assertThat(order.getStatus()).isEqualTo(OrderStatus.CREATED);
+        assertThat(geoClient.street).isEqualTo("Tverskaya");
     }
 
     @Test
@@ -113,6 +117,21 @@ class DeliveryUseCasesTest {
         @Override
         public List<Courier> findAll() {
             return couriers;
+        }
+    }
+
+    private static final class StubGeoClient implements GeoClient {
+        private final Location location;
+        private String street;
+
+        private StubGeoClient(Location location) {
+            this.location = location;
+        }
+
+        @Override
+        public Location getLocation(String street) {
+            this.street = street;
+            return location;
         }
     }
 }
