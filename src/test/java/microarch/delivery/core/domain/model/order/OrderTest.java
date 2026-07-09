@@ -2,6 +2,8 @@ package microarch.delivery.core.domain.model.order;
 
 import microarch.delivery.core.domain.model.Location;
 import microarch.delivery.core.domain.model.Volume;
+import microarch.delivery.core.domain.model.order.events.OrderAssignedDomainEvent;
+import microarch.delivery.core.domain.model.order.events.OrderCompletedDomainEvent;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Modifier;
@@ -56,6 +58,18 @@ class OrderTest {
     }
 
     @Test
+    void shouldRaiseOrderAssignedDomainEventWhenOrderIsAssigned() {
+        var order = Order.mustCreate(UUID.randomUUID(), Location.mustCreate(3, 3), Volume.mustCreate(4));
+
+        order.assign().getOrElseThrow();
+
+        assertThat(order.getDomainEvents()).hasSize(1);
+        assertThat(order.getDomainEvents().getFirst()).isInstanceOf(OrderAssignedDomainEvent.class);
+        var event = (OrderAssignedDomainEvent) order.getDomainEvents().getFirst();
+        assertThat(event.getOrderId()).isEqualTo(order.getId());
+    }
+
+    @Test
     void shouldCompleteOnlyAssignedOrder() {
         var order = Order.mustCreate(UUID.randomUUID(), Location.mustCreate(3, 3), Volume.mustCreate(4));
 
@@ -67,6 +81,20 @@ class OrderTest {
         assertThat(result.isSuccess()).isTrue();
         assertThat(order.getStatus()).isEqualTo(OrderStatus.COMPLETED);
         assertThat(order.complete().isFailure()).isTrue();
+    }
+
+    @Test
+    void shouldRaiseOrderCompletedDomainEventWhenOrderIsCompleted() {
+        var order = Order.mustCreate(UUID.randomUUID(), Location.mustCreate(3, 3), Volume.mustCreate(4));
+
+        order.assign().getOrElseThrow();
+        order.clearDomainEvents();
+        order.complete().getOrElseThrow();
+
+        assertThat(order.getDomainEvents()).hasSize(1);
+        assertThat(order.getDomainEvents().getFirst()).isInstanceOf(OrderCompletedDomainEvent.class);
+        var event = (OrderCompletedDomainEvent) order.getDomainEvents().getFirst();
+        assertThat(event.getOrderId()).isEqualTo(order.getId());
     }
 
     @Test

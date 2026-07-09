@@ -18,6 +18,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import microarch.delivery.core.domain.model.Location;
 import microarch.delivery.core.domain.model.Volume;
+import microarch.delivery.core.domain.model.order.events.OrderAssignedDomainEvent;
+import microarch.delivery.core.domain.model.order.events.OrderCompletedDomainEvent;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -70,6 +72,7 @@ public final class Order extends Aggregate<UUID> {
         }
 
         this.status = OrderStatus.ASSIGNED;
+        raiseDomainEvent(new OrderAssignedDomainEvent(this));
         return UnitResult.success();
     }
 
@@ -79,6 +82,7 @@ public final class Order extends Aggregate<UUID> {
         }
 
         this.status = OrderStatus.COMPLETED;
+        raiseDomainEvent(new OrderCompletedDomainEvent(this));
         return UnitResult.success();
     }
 
