@@ -1,5 +1,7 @@
 package microarch.delivery.core.application;
 
+import libs.ddd.Aggregate;
+import libs.ddd.DomainEventPublisher;
 import microarch.delivery.core.domain.model.Location;
 import microarch.delivery.core.domain.model.Volume;
 import microarch.delivery.core.domain.model.courier.Courier;
@@ -44,8 +46,9 @@ class DeliveryUseCasesTest {
     void assignOrderShouldDispatchFirstCreatedOrderToBestCourierAndSaveBothAggregates() {
         var orderRepository = new InMemoryOrderRepository();
         var courierRepository = new InMemoryCourierRepository();
+        var domainEventPublisher = new RecordingDomainEventPublisher();
         var handler = new AssignOrderCommandHandlerImpl(orderRepository, courierRepository,
-                new OrderDispatcherDomainServiceImpl());
+                new OrderDispatcherDomainServiceImpl(), domainEventPublisher);
         var order = Order.mustCreate(UUID.randomUUID(), Location.mustCreate(2, 2), Volume.mustCreate(3));
         var courier = Courier.mustCreate("Ivan", Location.mustCreate(2, 3));
         orderRepository.created = order;
@@ -58,12 +61,38 @@ class DeliveryUseCasesTest {
         assertThat(courier.getAssignments()).hasSize(1);
         assertThat(orderRepository.updated).containsExactly(order);
         assertThat(courierRepository.updated).containsExactly(courier);
+        assertThat(domainEventPublisher.published).containsExactly(order);
+    }
+
+    @Test
+    void completeOrderShouldCompleteCourierAssignmentAndPublishChangedOrder() {
+        var orderRepository = new InMemoryOrderRepository();
+        var courierRepository = new InMemoryCourierRepository();
+        var domainEventPublisher = new RecordingDomainEventPublisher();
+        var handler = new CompleteOrderCommandHandlerImpl(courierRepository, orderRepository, domainEventPublisher);
+        var order = Order.mustCreate(UUID.randomUUID(), Location.mustCreate(2, 2), Volume.mustCreate(3));
+        var courier = Courier.mustCreate("Ivan", Location.mustCreate(2, 3));
+        courier.assign(order.getId(), order.getVolume(), order.getLocation()).getOrElseThrow();
+        order.assign().getOrElseThrow();
+        order.clearDomainEvents();
+        orderRepository.orderById = order;
+        courierRepository.courierById = courier;
+
+        var command = CompleteOrderCommand.create(courier.getId(), order.getId()).getValue();
+        var result = handler.handle(command);
+
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.COMPLETED);
+        assertThat(orderRepository.updated).containsExactly(order);
+        assertThat(courierRepository.updated).containsExactly(courier);
+        assertThat(domainEventPublisher.published).containsExactly(order);
     }
 
     private static final class InMemoryOrderRepository implements OrderRepository {
         private final List<Order> added = new ArrayList<>();
         private final List<Order> updated = new ArrayList<>();
         private Order created;
+        private Order orderById;
 
         @Override
         public void add(Order order) {
@@ -77,7 +106,7 @@ class DeliveryUseCasesTest {
 
         @Override
         public Optional<Order> findById(UUID orderId) {
-            return Optional.empty();
+            return Optional.ofNullable(orderById).filter(order -> order.getId().equals(orderId));
         }
 
         @Override
@@ -99,6 +128,7 @@ class DeliveryUseCasesTest {
     private static final class InMemoryCourierRepository implements CourierRepository {
         private final List<Courier> updated = new ArrayList<>();
         private List<Courier> couriers = List.of();
+        private Courier courierById;
 
         @Override
         public void add(Courier courier) {
@@ -111,7 +141,7 @@ class DeliveryUseCasesTest {
 
         @Override
         public Optional<Courier> findById(UUID courierId) {
-            return Optional.empty();
+            return Optional.ofNullable(courierById).filter(courier -> courier.getId().equals(courierId));
         }
 
         @Override
@@ -132,6 +162,15 @@ class DeliveryUseCasesTest {
         public Location getLocation(String street) {
             this.street = street;
             return location;
+        }
+    }
+
+    private static final class RecordingDomainEventPublisher implements DomainEventPublisher {
+        private final List<Aggregate<?>> published = new ArrayList<>();
+
+        @Override
+        public void publish(Iterable<? extends Aggregate<?>> aggregates) {
+            aggregates.forEach(published::add);
         }
     }
 }
