@@ -1,7 +1,6 @@
 package microarch.delivery.adapters.out.grpc;
 
 import java.util.concurrent.TimeUnit;
-
 import clients.geo.GeoGrpc;
 import clients.geo.GeoProto;
 import io.grpc.ManagedChannel;
