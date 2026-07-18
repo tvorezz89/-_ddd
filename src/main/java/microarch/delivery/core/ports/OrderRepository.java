@@ -16,4 +16,6 @@ public interface OrderRepository {
     Optional<Order> getAnyCreated();
 
     List<Order> getAssigned();
+
+    List<Order> getActive();
 }

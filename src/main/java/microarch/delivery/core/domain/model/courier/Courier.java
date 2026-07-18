@@ -38,12 +38,7 @@ public class Courier extends Aggregate<UUID> {
         return new Courier(UUID.randomUUID(), name, location);
     }
 
-    private Courier(
-            UUID id,
-            String name,
-            Location location,
-            Volume maxVolume,
-            List<Assignment> assignments) {
+    private Courier(UUID id, String name, Location location, Volume maxVolume, List<Assignment> assignments) {
         super(id);
         validate(id, name, location);
         this.name = name;
@@ -52,11 +47,7 @@ public class Courier extends Aggregate<UUID> {
         this.assignments = new ArrayList<>(assignments);
     }
 
-    public static Courier restore(
-            UUID id,
-            String name,
-            Location location,
-            Volume maxVolume,
+    public static Courier restore(UUID id, String name, Location location, Volume maxVolume,
             List<Assignment> assignments) {
         return new Courier(id, name, location, maxVolume, assignments);
     }

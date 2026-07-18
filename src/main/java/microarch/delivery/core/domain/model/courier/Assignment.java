@@ -34,8 +34,7 @@ public class Assignment extends BaseEntity<UUID> {
         return new Assignment(id, orderId, volume, location, AssignmentStatus.ASSIGNED);
     }
 
-    public static Assignment restore(
-            UUID id, UUID orderId, Volume volume, Location location, AssignmentStatus status) {
+    public static Assignment restore(UUID id, UUID orderId, Volume volume, Location location, AssignmentStatus status) {
         return new Assignment(id, orderId, volume, location, status);
     }
 

@@ -47,12 +47,8 @@ class OrderJpaEntity {
     }
 
     static OrderJpaEntity fromDomain(Order order) {
-        return new OrderJpaEntity(
-                order.getId(),
-                order.getLocation().getX(),
-                order.getLocation().getY(),
-                order.getVolume().getValue(),
-                order.getStatus());
+        return new OrderJpaEntity(order.getId(), order.getLocation().getX(), order.getLocation().getY(),
+                order.getVolume().getValue(), order.getStatus());
     }
 
     Order toDomain() {
