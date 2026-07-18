@@ -43,12 +43,7 @@ class CourierJpaEntity {
     @JoinColumn(name = "courier_id", nullable = false)
     private List<AssignmentJpaEntity> assignments;
 
-    private CourierJpaEntity(
-            UUID id,
-            String name,
-            int locationX,
-            int locationY,
-            int maxVolume,
+    private CourierJpaEntity(UUID id, String name, int locationX, int locationY, int maxVolume,
             List<AssignmentJpaEntity> assignments) {
         this.id = id;
         this.name = name;
@@ -59,29 +54,15 @@ class CourierJpaEntity {
     }
 
     static CourierJpaEntity fromDomain(Courier courier) {
-        var assignments = courier.getAssignments().stream()
-                .map(AssignmentJpaEntity::fromDomain)
-                .toList();
+        var assignments = courier.getAssignments().stream().map(AssignmentJpaEntity::fromDomain).toList();
 
-        return new CourierJpaEntity(
-                courier.getId(),
-                courier.getName(),
-                courier.getLocation().getX(),
-                courier.getLocation().getY(),
-                courier.getMaxVolume().getValue(),
-                assignments);
+        return new CourierJpaEntity(courier.getId(), courier.getName(), courier.getLocation().getX(),
+                courier.getLocation().getY(), courier.getMaxVolume().getValue(), assignments);
     }
 
     Courier toDomain() {
-        var domainAssignments = assignments.stream()
-                .map(AssignmentJpaEntity::toDomain)
-                .toList();
+        var domainAssignments = assignments.stream().map(AssignmentJpaEntity::toDomain).toList();
 
-        return Courier.restore(
-                id,
-                name,
-                Location.of(locationX, locationY),
-                Volume.of(maxVolume),
-                domainAssignments);
+        return Courier.restore(id, name, Location.of(locationX, locationY), Volume.of(maxVolume), domainAssignments);
     }
 }

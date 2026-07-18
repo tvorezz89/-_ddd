@@ -41,12 +41,7 @@ class AssignmentJpaEntity {
     @Column(name = "status", nullable = false)
     private AssignmentStatus status;
 
-    private AssignmentJpaEntity(
-            UUID id,
-            UUID orderId,
-            int volume,
-            int locationX,
-            int locationY,
+    private AssignmentJpaEntity(UUID id, UUID orderId, int volume, int locationX, int locationY,
             AssignmentStatus status) {
         this.id = id;
         this.orderId = orderId;
@@ -57,17 +52,11 @@ class AssignmentJpaEntity {
     }
 
     static AssignmentJpaEntity fromDomain(Assignment assignment) {
-        return new AssignmentJpaEntity(
-                assignment.getId(),
-                assignment.getOrderId(),
-                assignment.getVolume().getValue(),
-                assignment.getLocation().getX(),
-                assignment.getLocation().getY(),
-                assignment.getStatus());
+        return new AssignmentJpaEntity(assignment.getId(), assignment.getOrderId(), assignment.getVolume().getValue(),
+                assignment.getLocation().getX(), assignment.getLocation().getY(), assignment.getStatus());
     }
 
     Assignment toDomain() {
-        return Assignment.restore(
-                id, orderId, Volume.of(volume), Location.of(locationX, locationY), status);
+        return Assignment.restore(id, orderId, Volume.of(volume), Location.of(locationX, locationY), status);
     }
 }

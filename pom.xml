@@ -77,6 +77,10 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.0</version>
@@ -323,6 +327,34 @@
 
                             <globalProperties>
                                 <supportingFiles>false</supportingFiles>
+                            </globalProperties>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>https://gitlab.com/microarch-ru/ddd-in-practice/system-design/-/raw/main/services/delivery/contracts/openapi.yml?ref_type=heads</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <output>${project.build.directory}/generated-sources/openapi-client</output>
+                            <apiPackage>microarch.delivery.adapters.out.http.delivery.api</apiPackage>
+                            <modelPackage>microarch.delivery.adapters.out.http.delivery.model</modelPackage>
+                            <invokerPackage>microarch.delivery.adapters.out.http.delivery</invokerPackage>
+
+                            <configOptions>
+                                <dateLibrary>java8</dateLibrary>
+                                <generateClientAsBean>true</generateClientAsBean>
+                                <useJakartaEe>true</useJakartaEe>
+                            </configOptions>
+
+                            <globalProperties>
+                                <apiTests>false</apiTests>
+                                <modelTests>false</modelTests>
+                                <apiDocs>false</apiDocs>
+                                <modelDocs>false</modelDocs>
                             </globalProperties>
                         </configuration>
                     </execution>

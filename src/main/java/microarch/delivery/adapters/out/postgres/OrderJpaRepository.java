@@ -11,4 +11,6 @@ interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, UUID> {
     Optional<OrderJpaEntity> findFirstByStatus(OrderStatus status);
 
     List<OrderJpaEntity> findAllByStatus(OrderStatus status);
+
+    List<OrderJpaEntity> findAllByStatusNot(OrderStatus status);
 }

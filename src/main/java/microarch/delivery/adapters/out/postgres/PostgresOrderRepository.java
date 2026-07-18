@@ -44,8 +44,12 @@ public class PostgresOrderRepository implements OrderRepository {
     @Override
     @Transactional(readOnly = true)
     public List<Order> getAssigned() {
-        return _orders.findAllByStatus(OrderStatus.ASSIGNED).stream()
-                .map(OrderJpaEntity::toDomain)
-                .toList();
+        return _orders.findAllByStatus(OrderStatus.ASSIGNED).stream().map(OrderJpaEntity::toDomain).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Order> getActive() {
+        return _orders.findAllByStatusNot(OrderStatus.COMPLETED).stream().map(OrderJpaEntity::toDomain).toList();
     }
 }

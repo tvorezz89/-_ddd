@@ -37,8 +37,6 @@ public class PostgresCourierRepository implements CourierRepository {
     @Override
     @Transactional(readOnly = true)
     public List<Courier> getAll() {
-        return _couriers.findAll().stream()
-                .map(CourierJpaEntity::toDomain)
-                .toList();
+        return _couriers.findAll().stream().map(CourierJpaEntity::toDomain).toList();
     }
 }
