@@ -8,6 +8,8 @@ import libs.errs.Guard;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import microarch.delivery.core.domain.model.order.events.OrderAssignedDomainEvent;
+import microarch.delivery.core.domain.model.order.events.OrderCompletedDomainEvent;
 
 import java.util.UUID;
 
@@ -39,6 +41,7 @@ public class Order extends Aggregate<UUID> {
             throw new DomainInvariantException(GeneralErrors.valueIsInvalid("status", status));
         }
         status = OrderStatus.ASSIGNED;
+        raiseDomainEvent(new OrderAssignedDomainEvent(getId()));
     }
 
     public void complete() {
@@ -46,6 +49,7 @@ public class Order extends Aggregate<UUID> {
             throw new DomainInvariantException(GeneralErrors.valueIsInvalid("status", status));
         }
         status = OrderStatus.COMPLETED;
+        raiseDomainEvent(new OrderCompletedDomainEvent(getId()));
     }
 
     private static void validate(UUID id, Location location, Volume volume, OrderStatus status) {

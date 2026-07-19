@@ -20,6 +20,7 @@ public class DefaultDomainEventPublisher implements DomainEventPublisher {
             for (DomainEvent event : aggregate.getDomainEvents()) {
                 publisher.publishEvent(event);
             }
+            aggregate.clearDomainEvents();
         }
     }
 }
