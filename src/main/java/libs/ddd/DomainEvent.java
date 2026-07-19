@@ -1,8 +1,8 @@
 package libs.ddd;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.UUID;
