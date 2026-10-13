@@ -1,67 +1,51 @@
 package microarch.delivery.core.domain.services;
 
 import libs.errs.Error;
-import libs.errs.GeneralErrors;
+import libs.errs.Result;
 import libs.errs.UnitResult;
 import microarch.delivery.core.domain.model.courier.Courier;
 import microarch.delivery.core.domain.model.order.Order;
 
+import java.util.List;
+
 /**
  * Доменный сервис, координирующий агрегаты Courier и Order.
  * <p>
- * Агрегаты не должны изменять состояние друг друга, поэтому сценарии «назначить заказ курьеру» и «завершить доставку
- * заказа», затрагивающие две границы консистентности, реализованы здесь. Каждый агрегат при этом инкапсулирует только
- * свои инварианты:
+ * Агрегаты не должны изменять состояние друг друга, поэтому сценарии «распределить заказ на курьера», «назначить заказ
+ * курьеру» и «завершить доставку заказа», затрагивающие две границы консистентности, реализованы здесь. Каждый агрегат
+ * при этом инкапсулирует только свои инварианты:
  * <ul>
  * <li>{@link Order} — допустимые переходы статусов;</li>
  * <li>{@link Courier} — ограничение по объему и наличие назначения.</li>
  * </ul>
  */
-public final class CourierOrderService {
+public interface CourierOrderService {
 
-    private CourierOrderService() {
-        // Domain service, no instantiation
-    }
+    /**
+     * Диспетчеризация: распределяет один заказ в статусе CREATED на самого подходящего курьера из списка.
+     * <p>
+     * Бизнес-правила:
+     * <ul>
+     * <li>за 1 раз диспетчеризуется только 1 заказ;</li>
+     * <li>курьеры, у которых недостаточно свободного объема (переполнены), не участвуют;</li>
+     * <li>расстояние считается от текущего местоположения курьера до заказа (манхэттенская метрика);</li>
+     * <li>побеждает курьер, который ближе всего к заказу;</li>
+     * <li>победитель берет заказ: заказ переводится в ASSIGNED, у курьера создается Assignment;</li>
+     * <li>если курьеров нет или все переполнены — диспетчеризация не состоялась, бизнес-ошибка.</li>
+     * </ul>
+     *
+     * @return курьер-победитель или бизнес-ошибка
+     */
+    Result<Courier, Error> dispatch(Order order, List<Courier> couriers);
 
     /**
      * Назначить заказ курьеру: переводит заказ в ASSIGNED и создает у курьера Assignment.
      */
-    public static UnitResult<Error> assignOrder(Courier courier, Order order) {
-        if (courier == null)
-            return UnitResult.failure(GeneralErrors.valueIsRequired("courier"));
-        if (order == null)
-            return UnitResult.failure(GeneralErrors.valueIsRequired("order"));
-
-        if (!courier.canTakeOrder(order.getVolume()))
-            return UnitResult.failure(Courier.Errors.courierCannotTakeOrder(courier.getName(), order.getId()));
-
-        var assignResult = order.assign();
-        if (assignResult.isFailure())
-            return assignResult;
-
-        return courier.addAssignment(order.getId(), order.getVolume());
-    }
+    UnitResult<Error> assignOrder(Courier courier, Order order);
 
     /**
      * Завершить доставку заказа: проверяет, что заказ назначен этому курьеру и курьер находится в 1 клетке от заказа
      * или ближе, затем завершает заказ и снимает назначение.
      */
-    public static UnitResult<Error> completeOrder(Courier courier, Order order) {
-        if (courier == null)
-            return UnitResult.failure(GeneralErrors.valueIsRequired("courier"));
-        if (order == null)
-            return UnitResult.failure(GeneralErrors.valueIsRequired("order"));
-
-        if (!courier.hasAssignment(order.getId()))
-            return UnitResult.failure(Courier.Errors.assignmentNotFound(courier.getName(), order.getId()));
-
-        if (!courier.isWithinReach(order.getLocation()))
-            return UnitResult.failure(Courier.Errors.courierTooFarFromOrder(courier.getName(), order.getId()));
-
-        var completeResult = order.complete();
-        if (completeResult.isFailure())
-            return completeResult;
-
-        return courier.removeAssignment(order.getId());
-    }
+    UnitResult<Error> completeOrder(Courier courier, Order order);
 }
