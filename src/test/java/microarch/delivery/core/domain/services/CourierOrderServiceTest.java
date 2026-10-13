@@ -13,6 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CourierOrderServiceTest {
 
+    private final CourierOrderService service = new CourierOrderServiceImpl();
+
     private final Location startLocation = Location.mustCreate(5, 5);
 
     private Order createOrder(int volumeValue, Location location) {
@@ -28,7 +30,7 @@ class CourierOrderServiceTest {
         var order = createOrder(5, Location.mustCreate(1, 1));
 
         // Act
-        var result = CourierOrderService.assignOrder(courier, order);
+        var result = service.assignOrder(courier, order);
 
         // Assert
         assertThat(result.isSuccess()).isTrue();
@@ -42,11 +44,11 @@ class CourierOrderServiceTest {
     void shouldReturnErrorWhenAssignOrderExceedingMaxVolume() {
         // Arrange
         var courier = Courier.mustCreate("Иван", startLocation);
-        CourierOrderService.assignOrder(courier, createOrder(15, Location.mustCreate(1, 1)));
+        service.assignOrder(courier, createOrder(15, Location.mustCreate(1, 1)));
         var order = createOrder(10, Location.mustCreate(2, 2));
 
         // Act
-        var result = CourierOrderService.assignOrder(courier, order);
+        var result = service.assignOrder(courier, order);
 
         // Assert
         assertThat(result.isFailure()).isTrue();
@@ -60,10 +62,10 @@ class CourierOrderServiceTest {
         var courier = Courier.mustCreate("Иван", startLocation);
         var other = Courier.mustCreate("Пётр", startLocation);
         var order = createOrder(5, Location.mustCreate(1, 1));
-        CourierOrderService.assignOrder(other, order);
+        service.assignOrder(other, order);
 
         // Act
-        var result = CourierOrderService.assignOrder(courier, order);
+        var result = service.assignOrder(courier, order);
 
         // Assert
         assertThat(result.isFailure()).isTrue();
@@ -74,7 +76,7 @@ class CourierOrderServiceTest {
     @Test
     void shouldReturnErrorWhenAssignOrderWithNullCourier() {
         // Act
-        var result = CourierOrderService.assignOrder(null, createOrder(5, startLocation));
+        var result = service.assignOrder(null, createOrder(5, startLocation));
 
         // Assert
         assertThat(result.isFailure()).isTrue();
@@ -86,7 +88,7 @@ class CourierOrderServiceTest {
         var courier = Courier.mustCreate("Иван", startLocation);
 
         // Act
-        var result = CourierOrderService.assignOrder(courier, null);
+        var result = service.assignOrder(courier, null);
 
         // Assert
         assertThat(result.isFailure()).isTrue();
@@ -98,8 +100,8 @@ class CourierOrderServiceTest {
         var courier = Courier.mustCreate("Иван", startLocation);
 
         // Act
-        var r1 = CourierOrderService.assignOrder(courier, createOrder(10, Location.mustCreate(1, 1)));
-        var r2 = CourierOrderService.assignOrder(courier, createOrder(10, Location.mustCreate(2, 2)));
+        var r1 = service.assignOrder(courier, createOrder(10, Location.mustCreate(1, 1)));
+        var r2 = service.assignOrder(courier, createOrder(10, Location.mustCreate(2, 2)));
 
         // Assert
         assertThat(r1.isSuccess()).isTrue();
@@ -114,11 +116,11 @@ class CourierOrderServiceTest {
         // Arrange
         var courier = Courier.mustCreate("Иван", startLocation);
         var order = createOrder(5, Location.mustCreate(6, 5));
-        CourierOrderService.assignOrder(courier, order);
+        service.assignOrder(courier, order);
         courier.move(Location.mustCreate(6, 5));
 
         // Act
-        var result = CourierOrderService.completeOrder(courier, order);
+        var result = service.completeOrder(courier, order);
 
         // Assert
         assertThat(result.isSuccess()).isTrue();
@@ -132,10 +134,10 @@ class CourierOrderServiceTest {
         // Arrange
         var courier = Courier.mustCreate("Иван", startLocation);
         var order = createOrder(5, startLocation);
-        CourierOrderService.assignOrder(courier, order);
+        service.assignOrder(courier, order);
 
         // Act
-        var result = CourierOrderService.completeOrder(courier, order);
+        var result = service.completeOrder(courier, order);
 
         // Assert
         assertThat(result.isSuccess()).isTrue();
@@ -147,10 +149,10 @@ class CourierOrderServiceTest {
         // Arrange
         var courier = Courier.mustCreate("Иван", startLocation);
         var order = createOrder(5, Location.mustCreate(10, 10));
-        CourierOrderService.assignOrder(courier, order);
+        service.assignOrder(courier, order);
 
         // Act
-        var result = CourierOrderService.completeOrder(courier, order);
+        var result = service.completeOrder(courier, order);
 
         // Assert
         assertThat(result.isFailure()).isTrue();
@@ -165,7 +167,7 @@ class CourierOrderServiceTest {
         var order = createOrder(5, startLocation);
 
         // Act
-        var result = CourierOrderService.completeOrder(courier, order);
+        var result = service.completeOrder(courier, order);
 
         // Assert
         assertThat(result.isFailure()).isTrue();
@@ -174,7 +176,7 @@ class CourierOrderServiceTest {
     @Test
     void shouldReturnErrorWhenCompleteOrderWithNullCourier() {
         // Act
-        var result = CourierOrderService.completeOrder(null, createOrder(5, startLocation));
+        var result = service.completeOrder(null, createOrder(5, startLocation));
 
         // Assert
         assertThat(result.isFailure()).isTrue();
@@ -186,7 +188,7 @@ class CourierOrderServiceTest {
         var courier = Courier.mustCreate("Иван", startLocation);
 
         // Act
-        var result = CourierOrderService.completeOrder(courier, null);
+        var result = service.completeOrder(courier, null);
 
         // Assert
         assertThat(result.isFailure()).isTrue();
