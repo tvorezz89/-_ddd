@@ -1,5 +1,6 @@
 package microarch.delivery.core.domain.model;
 
+import jakarta.persistence.Embeddable;
 import libs.ddd.ValueObject;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
+@Embeddable
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Location extends ValueObject<Location> {
