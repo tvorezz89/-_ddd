@@ -55,6 +55,9 @@ public class Assignment extends BaseEntity<UUID> {
     }
 
     public void complete(Location courierLocation) {
+        if (courierLocation == null) {
+            throw new IllegalArgumentException("Wrong courierLocation");
+        }
         var distance = courierLocation.calculateDistanceTo(this.location);
         if (distance <= MIN_DISTANCE) {
             this.status = Status.COMPLETED;
