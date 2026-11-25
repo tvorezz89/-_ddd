@@ -59,7 +59,7 @@ public class Assignment extends BaseEntity<UUID> {
             throw new IllegalArgumentException("Wrong courierLocation");
         }
         var distance = courierLocation.calculateDistanceTo(this.location);
-        if (distance <= MIN_DISTANCE) {
+        if (distance <= MIN_DISTANCE && !Status.COMPLETED.equals(this.status)) {
             this.status = Status.COMPLETED;
         } else {
             throw new IllegalArgumentException("Distance to order is too big");
